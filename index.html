@@ -195,19 +195,33 @@
         }
         .pg-sub { font-size: 1rem; color: var(--grey); font-weight: 400; opacity: 0; }
         .pg-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 2rem; max-width: 900px; margin: 0 auto;
         }
         .pg-card {
             background: #1a1c1b; border: 1px solid #2a2c2b; border-radius: 16px;
-            padding: 2rem; opacity: 0; transform: translateY(40px);
+            padding: 2.5rem; opacity: 0; transform: translateY(40px);
             transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
         }
-        .pg-card:hover {
-            border-color: var(--green); transform: translateY(-6px) !important;
-            box-shadow: 0 20px 60px rgba(171,255,132,0.05);
+        .pg-card.clickable {
+            cursor: pointer;
         }
-        .pg-card-emoji { font-size: 2.5rem; margin-bottom: 1.25rem; }
+        .pg-card.clickable:hover {
+            border-color: var(--lilac); transform: translateY(-6px) !important;
+            box-shadow: 0 20px 60px rgba(157,149,255,0.08);
+        }
+        .pg-card.coming-soon {
+            opacity: 0; border-style: dashed; border-color: #2a2c2b;
+        }
+        .pg-card-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; margin-bottom: 1.5rem;
+            background: rgba(157,149,255,0.08);
+        }
+        .pg-card.coming-soon .pg-card-icon {
+            background: rgba(124,124,111,0.08);
+        }
         .pg-card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.6rem; }
         .pg-card-desc { font-size: 0.9rem; color: var(--grey); line-height: 1.6; font-weight: 400; }
         .pg-card-tag {
@@ -215,6 +229,13 @@
             text-transform: uppercase; letter-spacing: 0.12em; padding: 0.35rem 0.9rem;
             border-radius: 100px; border: 1px solid var(--surface25); color: var(--grey);
         }
+        .pg-card-arrow {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            margin-top: 1.5rem; font-size: 0.8rem; color: var(--lilac);
+            letter-spacing: 0.05em; font-weight: 600;
+        }
+        .pg-card-arrow svg { transition: transform 0.3s; }
+        .pg-card.clickable:hover .pg-card-arrow svg { transform: translateX(4px); }
         .footer {
             text-align: center; padding: 5rem 2rem; font-size: 0.85rem;
             color: var(--surface25); position: relative; z-index: 5;
@@ -291,10 +312,18 @@
         <div class="pg-sub" id="pgSub">Things I'm learning. Things I'm building. All from curiosity.</div>
     </div>
     <div class="pg-grid">
-        <div class="pg-card"><div class="pg-card-emoji">🎵</div><div class="pg-card-title">AI Generated Song</div><div class="pg-card-desc">Created my first song using AI. Never played an instrument in my life.</div><span class="pg-card-tag">Music • AI</span></div>
-        <div class="pg-card"><div class="pg-card-emoji">🎨</div><div class="pg-card-title">Digital Art from Midjourney</div><div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment.</div><span class="pg-card-tag">Art • Midjourney</span></div>
-        <div class="pg-card"><div class="pg-card-emoji">✨</div><div class="pg-card-title">GSAP Scroll Animations</div><div class="pg-card-desc">This very website. Built with Claude, animated with GSAP. First time coding.</div><span class="pg-card-tag">Web • Animation</span></div>
-        <div class="pg-card"><div class="pg-card-emoji">🚀</div><div class="pg-card-title">What's Next?</div><div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div><span class="pg-card-tag">Coming Soon</span></div>
+        <div class="pg-card clickable" onclick="window.location.href='/gallery'">
+            <div class="pg-card-icon">🎨</div>
+            <div class="pg-card-title">Digital Art from Midjourney</div>
+            <div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment. Every prompt, a new world.</div>
+            <div class="pg-card-arrow">View Gallery <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="pg-card coming-soon">
+            <div class="pg-card-icon">🚀</div>
+            <div class="pg-card-title">What's Next?</div>
+            <div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div>
+            <span class="pg-card-tag">Coming Soon</span>
+        </div>
     </div>
 </section>
 <div class="footer">soch.me · built with curiosity</div>

@@ -342,6 +342,9 @@ function setBg(hex){gsap.to(bgEl,{backgroundColor:hex,duration:2,ease:'power2.in
 // ===== MASTER TIMELINE =====
 const tl=gsap.timeline({scrollTrigger:{trigger:'#intro',start:'top top',end:'bottom bottom',pin:'#introPin',scrub:isMobile?2.5:1.5,anticipatePin:1}});
 
+// Ensure introPin is visible when scroll starts (entrance animation handles initial reveal)
+tl.set('#introPin',{opacity:1});
+
 // ---- सोच holds ----
 tl.to({},{duration:4});
 

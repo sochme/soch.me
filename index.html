@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>soch.me</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0e100f;
+            --cream: #fffce1;
+            --lilac: #9d95ff;
+            --orange: #ff8709;
+            --green: #abff84;
+            --red: #ff4444;
+            --grey: #7c7c6f;
+            --surface25: #42433d;
+        }
+        html { background: var(--bg); }
+        body {
+            background: var(--bg); color: var(--cream);
+            overflow-x: hidden; font-family: 'Syne', sans-serif;
+        }
+
+        .grain {
+            position: fixed; inset: 0; z-index: 1000;
+            pointer-events: none; opacity: 0.035;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
+        }
+        @keyframes grain {
+            0% { transform: translate(0,0); } 25% { transform: translate(-3%,-3%); }
+            50% { transform: translate(3%,1%); } 75% { transform: translate(-1%,3%); }
+        }
+
+        .intro { height: 1000vh; position: relative; }
+        .intro-pin {
+            height: 100vh; width: 100%;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+
+        #particleCanvas {
+            position: absolute; inset: 0; z-index: 1; pointer-events: none;
+        }
+        #disintegrateCanvas {
+            position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
+        }
+
+        .blob {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); z-index: 1; pointer-events: none;
+        }
+        .blob-1 {
+            width: 450px; height: 450px;
+            background: radial-gradient(circle, rgba(255,252,225,0.06) 0%, transparent 70%);
+            top: 40%; left: 45%; transform: translate(-50%,-50%);
+        }
+        .blob-2 {
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(157,149,255,0.07) 0%, transparent 70%);
+            top: 25%; left: 25%; opacity: 0.5;
+        }
+        .blob-3 {
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(255,135,9,0.06) 0%, transparent 70%);
+            bottom: 25%; right: 20%; opacity: 0.4;
+        }
+        .blob-4 {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(171,255,132,0.05) 0%, transparent 70%);
+            top: 60%; right: 30%; opacity: 0;
+        }
+
+        .vignette {
+            position: absolute; inset: 0; z-index: 2; pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(14,16,15,0.7) 100%);
+        }
+
+        .text-layer {
+            position: relative; z-index: 3; text-align: center;
+        }
+
+        /* ===== ALL STAGES positioned absolutely, centered ===== */
+        .stage {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0; white-space: nowrap;
+        }
+
+        .hero-font {
+            font-size: clamp(5rem, 14vw, 13rem);
+            font-weight: 700; line-height: 1;
+            letter-spacing: -0.03em;
+        }
+
+        .hindi-font { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .eng-font { font-family: 'Syne', sans-serif; }
+
+        /*
+         * CRITICAL FIX: Soch + punctuation centering
+         * We use a flex container. "Soch" is always there.
+         * Punctuation sits next to it but has width that transitions.
+         * When hidden, it collapses. When shown, it expands.
+         * This way "Soch" stays centered when alone, and
+         * "Soch?" shifts slightly left — but that's natural and expected.
+         *
+         * ALTERNATIVELY: We can keep Soch always in the same spot
+         * by using a trick: the punctuation is overlaid AFTER Soch
+         * using a CSS approach where it doesn't affect layout.
+         */
+
+        .soch-wrapper {
+            display: inline-flex;
+            align-items: baseline;
+            justify-content: center;
+            position: relative;
+        }
+
+        .soch-base {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(5rem, 14vw, 13rem);
+            font-weight: 700; line-height: 1;
+            letter-spacing: -0.03em;
+            color: var(--cream);
+        }
+
+        /* Punctuation: positioned to not affect Soch's centering */
+        .punct-slot {
+            position: relative;
+            width: 0;
+            overflow: visible;
+        }
+
+        .punct-mark {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(5rem, 14vw, 13rem);
+            font-weight: 700; line-height: 1;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            opacity: 0;
+            white-space: nowrap;
+        }
+
+        .sub-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 0.3em;
+            position: absolute;
+            top: calc(50% + clamp(3rem, 8vw, 7.5rem));
+            left: 50%; transform: translateX(-50%);
+            white-space: nowrap; opacity: 0;
+        }
+
+        /* Sirf Ek Soch — force single line */
+        .sirf-text {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 6vw, 5.5rem);
+            font-weight: 700; letter-spacing: -0.02em;
+            color: var(--green);
+            white-space: nowrap;
+        }
+        .sirf-sub {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 0.3em; color: var(--surface25);
+            margin-top: 1.5rem; opacity: 0;
+        }
+
+        .scroll-cue {
+            position: absolute; bottom: 3rem; left: 50%;
+            transform: translateX(-50%); z-index: 5;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 0.6rem;
+        }
+        .scroll-cue span {
+            font-size: 0.6rem; text-transform: uppercase;
+            letter-spacing: 0.35em; color: var(--surface25);
+        }
+        .scroll-cue-line {
+            width: 1px; height: 50px; position: relative; overflow: hidden;
+        }
+        .scroll-cue-line::after {
+            content: ''; position: absolute; top: -100%; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--cream), transparent);
+            animation: cueSlide 2s ease-in-out infinite;
+        }
+        @keyframes cueSlide { 0% { top: -100%; } 100% { top: 100%; } }
+
+        /* PHILOSOPHY */
+        .philosophy {
+            position: relative; z-index: 5; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 8rem 2rem;
+        }
+        .philosophy-inner { max-width: 750px; text-align: center; }
+        .phil-line {
+            font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+            font-weight: 700; line-height: 1.4;
+            letter-spacing: -0.01em; margin-bottom: 0.5rem; overflow: hidden;
+        }
+        .phil-line .word { display: inline-block; transform: translateY(100%); opacity: 0; }
+        .phil-highlight { color: var(--green); }
+        .phil-divider {
+            width: 60px; height: 2px; background: var(--surface25);
+            margin: 2.5rem auto; transform: scaleX(0);
+        }
+        .phil-sub {
+            font-size: 1.05rem; color: var(--grey); line-height: 1.7;
+            font-weight: 400; margin-top: 1.5rem; opacity: 0; transform: translateY(20px);
+        }
+
+        /* PLAYGROUND */
+        .playground { position: relative; z-index: 5; padding: 4rem 2rem 6rem; }
+        .pg-header { text-align: center; margin-bottom: 4rem; }
+        .pg-title {
+            font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
+            letter-spacing: -0.02em; margin-bottom: 0.75rem; opacity: 0;
+        }
+        .pg-sub { font-size: 1rem; color: var(--grey); font-weight: 400; opacity: 0; }
+        .pg-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+        }
+        .pg-card {
+            background: #1a1c1b; border: 1px solid #2a2c2b; border-radius: 16px;
+            padding: 2rem; opacity: 0; transform: translateY(40px);
+            transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
+        }
+        .pg-card:hover {
+            border-color: var(--green); transform: translateY(-6px) !important;
+            box-shadow: 0 20px 60px rgba(171,255,132,0.05);
+        }
+        .pg-card-emoji { font-size: 2.5rem; margin-bottom: 1.25rem; }
+        .pg-card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.6rem; }
+        .pg-card-desc { font-size: 0.9rem; color: var(--grey); line-height: 1.6; font-weight: 400; }
+        .pg-card-tag {
+            display: inline-block; margin-top: 1.25rem; font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 0.12em; padding: 0.35rem 0.9rem;
+            border-radius: 100px; border: 1px solid var(--surface25); color: var(--grey);
+        }
+        .footer {
+            text-align: center; padding: 5rem 2rem; font-size: 0.85rem;
+            color: var(--surface25); position: relative; z-index: 5;
+        }
+        @media (max-width: 768px) { .pg-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 500px) {
+            .sirf-text { font-size: clamp(1.8rem, 8vw, 3rem); }
+        }
+    </style>
+</head>
+<body>
+<div class="grain"></div>
+
+<section class="intro" id="intro">
+    <div class="intro-pin" id="introPin">
+        <canvas id="particleCanvas"></canvas>
+        <canvas id="disintegrateCanvas"></canvas>
+        <div class="blob blob-1" id="blob1"></div>
+        <div class="blob blob-2" id="blob2"></div>
+        <div class="blob blob-3" id="blob3"></div>
+        <div class="blob blob-4" id="blob4"></div>
+        <div class="vignette"></div>
+
+        <div class="text-layer">
+            <!-- Stage 0: सोच -->
+            <div class="stage" id="s0">
+                <div class="hero-font hindi-font" id="hindiText">सोच</div>
+            </div>
+
+            <!-- Stage 1-4: Soch with punctuation overlay -->
+            <div class="stage" id="sEng">
+                <div class="soch-wrapper">
+                    <span class="soch-base" id="sochWord">Soch</span>
+                    <span class="punct-slot">
+                        <span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span>
+                        <span class="punct-mark" id="pE" style="color:var(--orange)">!</span>
+                        <span class="punct-mark" id="pP" style="color:var(--red)">.</span>
+                    </span>
+                </div>
+                <!-- Subtexts -->
+                <div class="sub-label" id="subQ" style="color:var(--lilac)">the question</div>
+                <div class="sub-label" id="subE" style="color:var(--orange)">the spark</div>
+                <div class="sub-label" id="subP" style="color:var(--red)">the conviction</div>
+            </div>
+
+            <!-- Stage 5: Sirf Ek Soch -->
+            <div class="stage" id="sSirf" style="text-align:center;">
+                <div class="sirf-text" id="sirfText">Sirf Ek Soch</div>
+                <div class="sirf-sub" id="sirfSub">just one thought is all it takes</div>
+            </div>
+        </div>
+
+        <div class="scroll-cue" id="scrollCue">
+            <span>Scroll</span>
+            <div class="scroll-cue-line"></div>
+        </div>
+    </div>
+</section>
+
+<section class="philosophy" id="philosophy">
+    <div class="philosophy-inner">
+        <div class="phil-line"><span class="word">If you are curious in life,</span></div>
+        <div class="phil-line"><span class="word">you have a <span class="phil-highlight">superpower</span>.</span></div>
+        <div class="phil-divider" id="philDivider"></div>
+        <div class="phil-line"><span class="word">That curiosity deserves</span></div>
+        <div class="phil-line"><span class="word">to be <span class="phil-highlight">celebrated</span>.</span></div>
+        <div class="phil-sub" id="philSub">A space to experiment, to learn, to create — and to show my team and my daughter that just one thought can unlock unlimited potential.</div>
+    </div>
+</section>
+
+<section class="playground" id="playground">
+    <div class="pg-header">
+        <div class="pg-title" id="pgTitle">The Playground</div>
+        <div class="pg-sub" id="pgSub">Things I'm learning. Things I'm building. All from curiosity.</div>
+    </div>
+    <div class="pg-grid">
+        <div class="pg-card"><div class="pg-card-emoji">🎵</div><div class="pg-card-title">AI Generated Song</div><div class="pg-card-desc">Created my first song using AI. Never played an instrument in my life.</div><span class="pg-card-tag">Music • AI</span></div>
+        <div class="pg-card"><div class="pg-card-emoji">🎨</div><div class="pg-card-title">Digital Art from Midjourney</div><div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment.</div><span class="pg-card-tag">Art • Midjourney</span></div>
+        <div class="pg-card"><div class="pg-card-emoji">✨</div><div class="pg-card-title">GSAP Scroll Animations</div><div class="pg-card-desc">This very website. Built with Claude, animated with GSAP. First time coding.</div><span class="pg-card-tag">Web • Animation</span></div>
+        <div class="pg-card"><div class="pg-card-emoji">🚀</div><div class="pg-card-title">What's Next?</div><div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div><span class="pg-card-tag">Coming Soon</span></div>
+    </div>
+</section>
+<div class="footer">soch.me · built with curiosity</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// ===== FIX PUNCT POSITION =====
+// Dynamically position punct marks at baseline of sochWord
+function alignPunct() {
+    const word = document.getElementById('sochWord');
+    const rect = word.getBoundingClientRect();
+    // punct-mark is absolute inside punct-slot which is after sochWord
+    // We need to set bottom correctly based on font metrics
+    document.querySelectorAll('.punct-mark').forEach(p => {
+        p.style.bottom = '0';
+        p.style.left = '0.05em'; // tiny gap
+    });
+}
+alignPunct();
+window.addEventListener('resize', alignPunct);
+
+// ===== PARTICLES =====
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let pts = [];
+let pC = {r:255,g:252,b:225,speed:1,burst:false,calm:false};
+
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resize(); addEventListener('resize',resize);
+
+class Pt {
+    constructor(){this.init();}
+    init(){
+        this.x=Math.random()*canvas.width;
+        this.y=Math.random()*canvas.height;
+        this.sz=Math.random()*2.5+0.5; this.bSz=this.sz;
+        this.vx=(Math.random()-0.5)*0.5;
+        this.vy=(Math.random()-0.5)*0.5;
+        this.op=Math.random()*0.5+0.1; this.bOp=this.op;
+        this.ph=Math.random()*Math.PI*2;
+        this.ps=Math.random()*0.015+0.005;
+    }
+    update(){
+        this.ph+=this.ps;
+        const p=Math.sin(this.ph)*0.35+0.65;
+        this.op=this.bOp*p;
+        this.sz=this.bSz*(p*0.4+0.8);
+        if(pC.burst){
+            const cx=canvas.width/2,cy=canvas.height/2;
+            const dx=this.x-cx,dy=this.y-cy;
+            const d=Math.sqrt(dx*dx+dy*dy)||1;
+            this.x+=(dx/d)*3;this.y+=(dy/d)*3;
+            this.sz=this.bSz*1.8;
+        } else if(pC.calm){
+            this.x+=this.vx*0.15;this.y+=this.vy*0.15;
+            this.op=this.bOp*0.4;
+        } else {
+            this.x+=this.vx*pC.speed;this.y+=this.vy*pC.speed;
+        }
+        if(this.x<-20)this.x=canvas.width+20;
+        if(this.x>canvas.width+20)this.x=-20;
+        if(this.y<-20)this.y=canvas.height+20;
+        if(this.y>canvas.height+20)this.y=-20;
+    }
+    draw(){
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);
+        ctx.fillStyle=`rgba(${pC.r},${pC.g},${pC.b},${this.op})`;
+        ctx.fill();
+    }
+}
+for(let i=0;i<80;i++)pts.push(new Pt());
+
+function drawLines(){
+    for(let i=0;i<pts.length;i++){
+        for(let j=i+1;j<pts.length;j++){
+            const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+            const d=Math.sqrt(dx*dx+dy*dy);
+            if(d<110){
+                ctx.beginPath();
+                ctx.moveTo(pts[i].x,pts[i].y);
+                ctx.lineTo(pts[j].x,pts[j].y);
+                ctx.strokeStyle=`rgba(${pC.r},${pC.g},${pC.b},${(1-d/110)*0.05})`;
+                ctx.lineWidth=0.5;ctx.stroke();
+            }
+        }
+    }
+}
+function pLoop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pts.forEach(p=>{p.update();p.draw();});drawLines();
+    requestAnimationFrame(pLoop);
+}
+pLoop();
+
+// ===== DISINTEGRATION =====
+const dC=document.getElementById('disintegrateCanvas');
+const dX=dC.getContext('2d');
+let dP=[],disin=false;
+function resizeD(){dC.width=innerWidth;dC.height=innerHeight;}
+resizeD();addEventListener('resize',resizeD);
+
+class DP{
+    constructor(x,y){
+        this.x=x;this.y=y;
+        this.sz=Math.random()*3+1;
+        this.vx=(Math.random()-0.5)*8;
+        this.vy=(Math.random()-0.5)*8-2;
+        this.g=0.05+Math.random()*0.05;
+        this.op=1;this.dc=0.008+Math.random()*0.012;
+        this.rot=Math.random()*360;
+        this.rs=(Math.random()-0.5)*10;
+    }
+    update(){
+        this.x+=this.vx;this.y+=this.vy;
+        this.vy+=this.g;this.vx*=0.99;
+        this.op-=this.dc;this.rot+=this.rs;
+        if(this.op<0)this.op=0;
+    }
+    draw(){
+        dX.save();dX.translate(this.x,this.y);
+        dX.rotate(this.rot*Math.PI/180);
+        dX.fillStyle=`rgba(171,255,132,${this.op})`;
+        dX.fillRect(-this.sz/2,-this.sz/2,this.sz,this.sz);
+        dX.restore();
+    }
+}
+function spawnD(){
+    const el=document.getElementById('sirfText');
+    const r=el.getBoundingClientRect();dP=[];
+    for(let i=0;i<200;i++){
+        dP.push(new DP(r.left+Math.random()*r.width,r.top+Math.random()*r.height));
+    }
+    disin=true;dC.style.opacity=1;
+}
+function dLoop(){
+    if(!disin){requestAnimationFrame(dLoop);return;}
+    dX.clearRect(0,0,dC.width,dC.height);
+    let alive=false;
+    dP.forEach(p=>{p.update();p.draw();if(p.op>0)alive=true;});
+    if(!alive){disin=false;dC.style.opacity=0;}
+    requestAnimationFrame(dLoop);
+}
+dLoop();
+
+// ===== AMBIENT =====
+gsap.set('#s0',{opacity:1});
+gsap.to('#blob1',{x:30,y:-25,duration:7,ease:'sine.inOut',yoyo:true,repeat:-1});
+gsap.to('#blob2',{x:-20,y:30,duration:9,ease:'sine.inOut',yoyo:true,repeat:-1});
+gsap.to('#blob3',{x:25,y:-15,duration:11,ease:'sine.inOut',yoyo:true,repeat:-1});
+gsap.to('#hindiText',{scale:1.03,duration:3,ease:'sine.inOut',yoyo:true,repeat:-1});
+
+// ===== MASTER TIMELINE =====
+const tl=gsap.timeline({
+    scrollTrigger:{
+        trigger:'#intro',start:'top top',end:'bottom bottom',
+        pin:'#introPin',scrub:1.2,anticipatePin:1,
+    }
+});
+
+// ---- सोच holds (0-12%) ----
+tl.to({},{duration:12});
+
+// ---- सोच → Soch (12-22%) ----
+tl.to('#hindiText',{scale:1.15,opacity:0,duration:4,ease:'power2.in'})
+.set('#s0',{opacity:0})
+.set('#sEng',{opacity:1})
+.fromTo('#sochWord',{scale:0.85,opacity:0},{scale:1,opacity:1,duration:5,ease:'power3.out'})
+.to('#blob1',{opacity:0.7,duration:3},'<');
+
+// ---- Soch holds (22-31%) ----
+tl.to({},{duration:9});
+
+// ---- ? materializes (31-43%) — Soch stays still, ? fades in next to it ----
+tl.call(()=>{gsap.to(pC,{r:157,g:149,b:255,duration:2});})
+.fromTo('#pQ',{
+    opacity:0, scale:0.3,
+},{
+    opacity:1, scale:1,
+    duration:8, ease:'power2.out',
+})
+.to('#blob2',{opacity:0.7,scale:1.3,duration:5},'<')
+.to('#blob1',{opacity:0.2,duration:3},'<')
+.to('#subQ',{opacity:0.4,duration:3},'-=3');
+
+// ---- Soch? holds (43-50%) ----
+tl.to({},{duration:7});
+
+// ---- ? → ! (50-62%) ----
+tl.to('#pQ',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
+.to('#subQ',{opacity:0,duration:1},'<')
+.to('#blob2',{opacity:0,duration:2},'<')
+.call(()=>{
+    gsap.to(pC,{r:255,g:135,b:9,duration:1});
+    pC.burst=true;setTimeout(()=>{pC.burst=false;},600);
+})
+.fromTo('#pE',{scale:3,opacity:0,y:-20},{
+    scale:1,opacity:1,y:0,duration:5,ease:'back.out(2)',
+})
+.to('#blob3',{opacity:0.7,scale:1.5,duration:3,ease:'power2.out'},'<')
+.to('#blob3',{opacity:0.35,scale:1.1,duration:4})
+.to('#subE',{opacity:0.4,duration:3},'-=3');
+
+// ---- Soch! holds (62-69%) ----
+tl.to({},{duration:7});
+
+// ---- ! → . (69-80%) ----
+tl.to('#pE',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
+.to('#subE',{opacity:0,duration:1},'<')
+.to('#blob3',{opacity:0,duration:2},'<')
+.call(()=>{
+    gsap.to(pC,{r:255,g:68,b:68,duration:2});
+    pC.calm=true;pC.speed=0.3;
+})
+.fromTo('#pP',{y:-80,opacity:0},{
+    y:0,opacity:1,duration:3,ease:'bounce.out',
+})
+.to('#subP',{opacity:0.4,duration:3},'-=2');
+
+// ---- Soch. holds (80-86%) ----
+tl.to({},{duration:6});
+
+// ---- Soch. → Sirf Ek Soch (86-94%) ----
+tl.to('#sEng',{opacity:0,scale:0.95,duration:3,ease:'power2.in'})
+.set('#sEng',{opacity:0})
+.set('#sSirf',{opacity:1})
+.call(()=>{
+    gsap.to(pC,{r:171,g:255,b:132,duration:2});
+    pC.calm=false;pC.speed=0.8;
+})
+.fromTo('#sirfText',{opacity:0,scale:0.6,y:40},{
+    opacity:1,scale:1,y:0,duration:5,ease:'power3.out',
+})
+.to('#blob4',{opacity:0.8,scale:2,duration:5,ease:'power2.out'},'<')
+.to('#blob1',{
+    background:'radial-gradient(circle, rgba(171,255,132,0.1) 0%, transparent 70%)',
+    opacity:0.6,duration:4,
+},'<')
+.fromTo('#sirfSub',{opacity:0,y:15},{opacity:0.5,y:0,duration:4,ease:'power2.out'},'-=3');
+
+// ---- Hold (94-96%) ----
+tl.to({},{duration:3});
+
+// ---- Disintegration (96-100%) ----
+tl.call(()=>{spawnD();})
+.to('#sirfText',{opacity:0,scale:1.1,filter:'blur(4px)',duration:3,ease:'power2.in'})
+.to('#sirfSub',{opacity:0,duration:2},'<')
+.to(['#blob1','#blob4'],{opacity:0,duration:3},'<')
+.to('#introPin',{opacity:0,duration:4,ease:'power2.in'});
+
+tl.to('#scrollCue',{opacity:0,duration:2},0.5);
+
+// ===== PHILOSOPHY =====
+document.querySelectorAll('.phil-line .word').forEach((w,i)=>{
+    gsap.to(w,{y:0,opacity:1,duration:1,delay:i*0.2,ease:'power3.out',
+        scrollTrigger:{trigger:'#philosophy',start:'top 65%',toggleActions:'play none none reverse'}});
+});
+gsap.to('#philDivider',{scaleX:1,duration:1,delay:0.6,ease:'power2.inOut',
+    scrollTrigger:{trigger:'#philosophy',start:'top 60%',toggleActions:'play none none reverse'}});
+gsap.to('#philSub',{opacity:1,y:0,duration:1.2,delay:1,ease:'power2.out',
+    scrollTrigger:{trigger:'#philosophy',start:'top 55%',toggleActions:'play none none reverse'}});
+
+// ===== PLAYGROUND =====
+gsap.to('#pgTitle',{opacity:1,duration:0.8,ease:'power3.out',
+    scrollTrigger:{trigger:'#playground',start:'top 70%',toggleActions:'play none none reverse'}});
+gsap.to('#pgSub',{opacity:1,duration:0.8,delay:0.15,ease:'power3.out',
+    scrollTrigger:{trigger:'#playground',start:'top 70%',toggleActions:'play none none reverse'}});
+gsap.utils.toArray('.pg-card').forEach((c,i)=>{
+    gsap.to(c,{opacity:1,y:0,duration:0.7,delay:i*0.12,ease:'power3.out',
+        scrollTrigger:{trigger:c,start:'top 85%',toggleActions:'play none none reverse'}});
+});
+</script>
+</body>
+</html>

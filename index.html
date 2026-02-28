@@ -518,10 +518,10 @@ mm.add({
     // ---- ? materializes (Soch stays cream, ? is lilac) ----
     tl.call(() => {
         if (isDesktop) gsap.to(pC, { r: 157, g: 149, b: 255, duration: 2 });
-        setBg('#0e0f14');
+        setBg('#0d0e12');
     })
     .fromTo('#pQ', { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 5, ease: 'power2.out' })
-    .to('#textGlow', { background: 'rgba(157,149,255,0.14)', width: isDesktop ? 680 : 320, height: isDesktop ? 400 : 220, duration: 4 }, '<')
+    .to('#textGlow', { background: 'rgba(157,149,255,0.06)', width: isDesktop ? 600 : 280, height: isDesktop ? 350 : 200, duration: 4 }, '<')
     .to('#lineQ', { scaleX: 1, duration: 3, ease: 'power2.inOut' }, '-=3')
     .to('#subQ', { opacity: 0.8, clipPath: 'inset(0 0% 0 0)', duration: 3, ease: 'power2.out' }, '-=2');
 
@@ -534,10 +534,10 @@ mm.add({
       .to('#lineQ', { scaleX: 0, duration: 1.5 }, '<')
       .call(() => {
           if (isDesktop) { gsap.to(pC, { r: 255, g: 135, b: 9, duration: 1 }); pC.burst = true; setTimeout(() => { pC.burst = false; }, 800); }
-          setBg('#14110e');
+          setBg('#12100d');
       })
       .fromTo('#pE', { scale: 2.5, opacity: 0, y: -15 }, { scale: 1, opacity: 1, y: 0, duration: 4, ease: 'back.out(1.7)' })
-      .to('#textGlow', { background: 'rgba(255,135,9,0.15)', width: isDesktop ? 700 : 340, height: isDesktop ? 420 : 230, duration: 3 }, '<')
+      .to('#textGlow', { background: 'rgba(255,135,9,0.06)', width: isDesktop ? 620 : 300, height: isDesktop ? 370 : 210, duration: 3 }, '<')
       .to('#lineE', { scaleX: 1, duration: 2.5, ease: 'power2.inOut' }, '-=3')
       .to('#subE', { opacity: 0.8, clipPath: 'inset(0 0% 0 0)', duration: 2.5, ease: 'power2.out' }, '-=2');
 
@@ -550,10 +550,10 @@ mm.add({
       .to('#lineE', { scaleX: 0, duration: 1.5 }, '<')
       .call(() => {
           if (isDesktop) { gsap.to(pC, { r: 255, g: 68, b: 68, duration: 1.5 }); pC.calm = true; pC.speed = 0.3; }
-          setBg('#140e0e');
+          setBg('#120d0d');
       })
       .fromTo('#pP', { y: -60, opacity: 0 }, { y: 0, opacity: 1, duration: 3, ease: 'bounce.out' })
-      .to('#textGlow', { background: 'rgba(255,68,68,0.18)', width: isDesktop ? 680 : 320, height: isDesktop ? 400 : 220, duration: 3 }, '<')
+      .to('#textGlow', { background: 'rgba(255,68,68,0.07)', width: isDesktop ? 600 : 280, height: isDesktop ? 350 : 200, duration: 3 }, '<')
       .to('#lineP', { scaleX: 1, duration: 2.5, ease: 'power2.inOut' }, '-=3')
       .to('#subP', { opacity: 0.8, clipPath: 'inset(0 0% 0 0)', duration: 2.5, ease: 'power2.out' }, '-=2');
 
@@ -569,10 +569,10 @@ mm.add({
       .set('#sSirf', { opacity: 1 })
       .call(() => {
           if (isDesktop) { gsap.to(pC, { r: 171, g: 255, b: 132, duration: 2 }); pC.calm = false; pC.speed = 0.8; }
-          setBg('#0e140f');
+          setBg('#0d120e');
       })
       .fromTo('#sirfText', { opacity: 0, scale: 0.4, y: 60 }, { opacity: 1, scale: 1, y: 0, duration: 7, ease: 'power2.out' })
-      .to('#textGlow', { background: 'rgba(171,255,132,0.14)', width: isDesktop ? 780 : 360, height: isDesktop ? 400 : 220, opacity: 1, duration: 5 }, '<2')
+      .to('#textGlow', { background: 'rgba(171,255,132,0.06)', width: isDesktop ? 700 : 320, height: isDesktop ? 350 : 200, opacity: 1, duration: 5 }, '<2')
       .to('#sirfSub', { opacity: 0.7, clipPath: 'inset(0 0% 0 0)', duration: 4, ease: 'power2.out' }, '-=3');
 
     // ---- Sirf Ek Soch holds ----

@@ -439,10 +439,10 @@ class DP{
     constructor(x,y){
         this.x=x;this.y=y;
         this.sz=Math.random()*3+1;
-        this.vx=(Math.random()-0.5)*8;
-        this.vy=(Math.random()-0.5)*8-2;
-        this.g=0.05+Math.random()*0.05;
-        this.op=1;this.dc=0.008+Math.random()*0.012;
+        this.vx=(Math.random()-0.5)*5;
+        this.vy=(Math.random()-0.5)*5-1.5;
+        this.g=0.03+Math.random()*0.03;
+        this.op=1;this.dc=0.004+Math.random()*0.006;
         this.rot=Math.random()*360;
         this.rs=(Math.random()-0.5)*10;
     }
@@ -588,9 +588,9 @@ tl.to({},{duration:8});
 
 // ---- Disintegration ----
 tl.call(()=>{spawnD();})
-.to('#sirfText',{opacity:0,scale:1.05,filter:'blur(3px)',duration:3,ease:'power2.in'})
-.to('#sirfSub',{opacity:0,duration:2},'<')
-.to('#textGlow',{opacity:0,duration:2.5},'<');
+.to('#sirfText',{opacity:0,scale:1.08,filter:'blur(5px)',duration:5,ease:'power2.in'})
+.to('#sirfSub',{opacity:0,duration:3},'<')
+.to('#textGlow',{opacity:0,duration:4},'<');
 
 tl.to('#scrollCue',{opacity:0,duration:2},0.5);
 

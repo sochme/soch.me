@@ -492,69 +492,70 @@ const tl=gsap.timeline({
     }
 });
 
-// ---- सोच holds (0-12%) ----
-tl.to({},{duration:12});
+// ---- सोच holds (0-10%) ----
+tl.to({},{duration:10});
 
-// ---- सोच → Soch (12-22%) ----
+// ---- सोच → Soch (10-18%) ----
 tl.to('#hindiText',{scale:1.15,opacity:0,duration:4,ease:'power2.in'})
 .set('#s0',{opacity:0})
 .set('#sEng',{opacity:1})
 .fromTo('#sochWord',{scale:0.85,opacity:0},{scale:1,opacity:1,duration:5,ease:'power3.out'})
 .to('#textGlow',{background:'rgba(255,252,225,0.08)',width:550,height:320,duration:3},'<');
 
-// ---- Soch holds (22-31%) ----
-tl.to({},{duration:9});
+// ---- Soch holds (18-25%) ----
+tl.to({},{duration:7});
 
-// ---- ? materializes (31-43%) — Soch stays still, ? fades in next to it ----
+// ---- ? materializes (25-36%) — slow wonder ----
 tl.call(()=>{gsap.to(pC,{r:157,g:149,b:255,duration:2});})
 .fromTo('#pQ',{
     opacity:0, scale:0.3,
 },{
     opacity:1, scale:1,
-    duration:8, ease:'power2.out',
+    duration:10, ease:'power2.out',
 })
-.to('#textGlow',{background:'rgba(157,149,255,0.12)',width:650,height:380,duration:5},'<')
-.to('#subQ',{opacity:0.4,duration:3},'-=3');
+.to('#textGlow',{background:'rgba(157,149,255,0.12)',width:650,height:380,duration:8},'<')
+.to('#subQ',{opacity:0.4,duration:4},'-=4');
 
-// ---- Soch? holds (43-50%) ----
-tl.to({},{duration:7});
+// ---- Soch? holds (36-44%) — let it breathe ----
+tl.to({},{duration:8});
 
-// ---- ? → ! (50-62%) ----
-tl.to('#pQ',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
-.to('#subQ',{opacity:0,duration:1},'<')
+// ---- ? → ! (44-55%) — confident transition, not rushed ----
+tl.to('#pQ',{opacity:0,scale:0.8,duration:3,ease:'power2.inOut'})
+.to('#subQ',{opacity:0,duration:2},'<')
+.to('#textGlow',{background:'rgba(255,252,225,0.04)',width:500,height:300,duration:2},'<')
 .call(()=>{
-    gsap.to(pC,{r:255,g:135,b:9,duration:1});
-    pC.burst=true;setTimeout(()=>{pC.burst=false;},600);
+    gsap.to(pC,{r:255,g:135,b:9,duration:1.5});
+    pC.burst=true;setTimeout(()=>{pC.burst=false;},800);
 })
-.fromTo('#pE',{scale:3,opacity:0,y:-20},{
-    scale:1,opacity:1,y:0,duration:5,ease:'back.out(2)',
+.fromTo('#pE',{scale:2.5,opacity:0,y:-15},{
+    scale:1,opacity:1,y:0,duration:6,ease:'back.out(1.7)',
 })
-.to('#textGlow',{background:'rgba(255,135,9,0.14)',width:700,height:400,duration:3},'<')
-.to('#textGlow',{width:600,height:350,duration:4})
+.to('#textGlow',{background:'rgba(255,135,9,0.13)',width:680,height:400,duration:5},'<')
 .to('#subE',{opacity:0.4,duration:3},'-=3');
 
-// ---- Soch! holds (62-69%) ----
-tl.to({},{duration:7});
+// ---- Soch! holds (55-63%) — let the energy settle ----
+tl.to({},{duration:8});
 
-// ---- ! → . (69-80%) ----
-tl.to('#pE',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
-.to('#subE',{opacity:0,duration:1},'<')
+// ---- ! → . (63-74%) — energy calms into conviction ----
+tl.to('#pE',{opacity:0,scale:0.8,duration:3,ease:'power2.inOut'})
+.to('#subE',{opacity:0,duration:2},'<')
+.to('#textGlow',{background:'rgba(255,252,225,0.04)',width:500,height:300,duration:2},'<')
 .call(()=>{
     gsap.to(pC,{r:255,g:68,b:68,duration:2});
     pC.calm=true;pC.speed=0.3;
 })
-.fromTo('#pP',{y:-80,opacity:0},{
-    y:0,opacity:1,duration:3,ease:'bounce.out',
+.fromTo('#pP',{y:-60,opacity:0},{
+    y:0,opacity:1,duration:4,ease:'bounce.out',
 })
-.to('#textGlow',{background:'rgba(255,68,68,0.10)',width:500,height:300,duration:3},'<')
+.to('#textGlow',{background:'rgba(255,68,68,0.11)',width:600,height:350,duration:4},'<')
 .to('#subP',{opacity:0.4,duration:3},'-=2');
 
-// ---- Soch. holds (80-86%) ----
-tl.to({},{duration:6});
+// ---- Soch. holds (74-82%) — conviction sinks in ----
+tl.to({},{duration:8});
 
-// ---- Soch. → Sirf Ek Soch (86-94%) ----
-tl.to('#sEng',{opacity:0,scale:0.95,duration:3,ease:'power2.in'})
-.to('#textGlow',{opacity:0.3,duration:2},'<')
+// ---- Soch. → Sirf Ek Soch (82-92%) — grand reveal ----
+tl.to('#sEng',{opacity:0,scale:0.95,duration:4,ease:'power2.in'})
+.to('#textGlow',{opacity:0.3,duration:3},'<')
 .set('#sEng',{opacity:0})
 .set('#sSirf',{opacity:1})
 .call(()=>{
@@ -562,13 +563,13 @@ tl.to('#sEng',{opacity:0,scale:0.95,duration:3,ease:'power2.in'})
     pC.calm=false;pC.speed=0.8;
 })
 .fromTo('#sirfText',{opacity:0,scale:0.6,y:40},{
-    opacity:1,scale:1,y:0,duration:5,ease:'power3.out',
+    opacity:1,scale:1,y:0,duration:6,ease:'power3.out',
 })
-.to('#textGlow',{background:'rgba(171,255,132,0.12)',width:700,height:350,opacity:1,duration:5},'<')
-.fromTo('#sirfSub',{opacity:0,y:15},{opacity:0.5,y:0,duration:4,ease:'power2.out'},'-=3');
+.to('#textGlow',{background:'rgba(171,255,132,0.12)',width:750,height:380,opacity:1,duration:6},'<')
+.fromTo('#sirfSub',{opacity:0,y:15},{opacity:0.5,y:0,duration:5,ease:'power2.out'},'-=3');
 
-// ---- Hold (94-96%) ----
-tl.to({},{duration:2.5});
+// ---- Sirf Ek Soch holds (92-96%) — let the statement land ----
+tl.to({},{duration:4});
 
 // ---- Disintegration (96-100%) ----
 tl.call(()=>{spawnD();})

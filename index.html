@@ -101,10 +101,9 @@
         .eng-font { font-family: 'Syne', sans-serif; }
 
         /*
-         * BULLETPROOF FIX: Soch is just centered text.
-         * Punctuation marks are separate absolutely-positioned elements
-         * whose left position is calculated by JS based on Soch's right edge.
-         * This way Soch NEVER moves, and punct always sits right next to it.
+         * BULLETPROOF FIX: soch-base is position:relative so it becomes
+         * the positioning parent for punct marks. Punct marks use left:100%
+         * to sit right at the edge of Soch. No JS needed.
          */
 
         .soch-base {
@@ -114,6 +113,7 @@
             letter-spacing: -0.03em;
             color: var(--cream);
             display: inline-block;
+            position: relative;
         }
 
         .punct-mark {
@@ -121,8 +121,9 @@
             font-size: clamp(5rem, 14vw, 13rem);
             font-weight: 700; line-height: 1;
             position: absolute;
+            left: 100%;
+            top: 0;
             opacity: 0;
-            /* left and top set by JS */
         }
 
         .sub-label {
@@ -254,10 +255,7 @@
 
             <!-- Stage 1-4: Soch with punctuation -->
             <div class="stage" id="sEng">
-                <span class="soch-base" id="sochWord">Soch</span>
-                <span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span>
-                <span class="punct-mark" id="pE" style="color:var(--orange)">!</span>
-                <span class="punct-mark" id="pP" style="color:var(--red)">.</span>
+                <span class="soch-base" id="sochWord">Soch<span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span><span class="punct-mark" id="pE" style="color:var(--orange)">!</span><span class="punct-mark" id="pP" style="color:var(--red)">.</span></span>
                 <!-- Subtexts -->
                 <div class="sub-label" id="subQ" style="color:var(--lilac)">the question</div>
                 <div class="sub-label" id="subE" style="color:var(--orange)">the spark</div>
@@ -308,29 +306,8 @@
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-// ===== POSITION PUNCTUATION next to Soch =====
-function positionPunct() {
-    const soch = document.getElementById('sochWord');
-    const stage = document.getElementById('sEng');
-    if (!soch || !stage) return;
-    
-    // Get Soch's position relative to its parent stage
-    const sochRect = soch.getBoundingClientRect();
-    const stageRect = stage.getBoundingClientRect();
-    
-    // Punct should sit right after Soch's right edge, same baseline
-    const rightEdge = sochRect.right - stageRect.left;
-    const top = sochRect.top - stageRect.top;
-    
-    document.querySelectorAll('.punct-mark').forEach(p => {
-        p.style.left = (rightEdge + 2) + 'px'; // 2px gap
-        p.style.top = top + 'px';
-    });
-}
-positionPunct();
-window.addEventListener('resize', positionPunct);
-// Also reposition after fonts load
-document.fonts.ready.then(positionPunct);
+// ===== PUNCT POSITIONING: handled purely by CSS (left:100%, top:0) =====
+// No JS needed — punct marks are children of soch-base with position:relative
 
 // ===== PARTICLES =====
 const canvas = document.getElementById('particleCanvas');
@@ -552,14 +529,14 @@ tl.to('#sEng',{opacity:0,scale:0.95,duration:3,ease:'power2.in'})
 .fromTo('#sirfSub',{opacity:0,y:15},{opacity:0.5,y:0,duration:4,ease:'power2.out'},'-=3');
 
 // ---- Hold (94-96%) ----
-tl.to({},{duration:3});
+tl.to({},{duration:1});
 
 // ---- Disintegration (96-100%) ----
 tl.call(()=>{spawnD();})
-.to('#sirfText',{opacity:0,scale:1.1,filter:'blur(4px)',duration:3,ease:'power2.in'})
-.to('#sirfSub',{opacity:0,duration:2},'<')
-.to(['#blob1','#blob4'],{opacity:0,duration:3},'<')
-.to('#introPin',{opacity:0,duration:4,ease:'power2.in'});
+.to('#sirfText',{opacity:0,scale:1.1,filter:'blur(4px)',duration:2,ease:'power2.in'})
+.to('#sirfSub',{opacity:0,duration:1},'<')
+.to(['#blob1','#blob4'],{opacity:0,duration:2},'<')
+.to('#introPin',{opacity:0,duration:1.5,ease:'power2.in'});
 
 tl.to('#scrollCue',{opacity:0,duration:2},0.5);
 

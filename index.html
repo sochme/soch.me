@@ -20,10 +20,9 @@
             --surface25: #42433d;
         }
         html { background: var(--bg); }
-        body {
-            background: var(--bg); color: var(--cream);
-            overflow-x: hidden; font-family: 'Syne', sans-serif;
-        }
+        body { background: var(--bg); color: var(--cream); overflow-x: hidden; font-family: 'Syne', sans-serif; }
+
+        #loader { position:fixed;inset:0;z-index:9999;background:var(--bg); }
 
         .grain {
             position: fixed; inset: 0; z-index: 1000;
@@ -32,257 +31,146 @@
             animation: grain 0.4s steps(1) infinite;
         }
         @keyframes grain {
-            0% { transform: translate(0,0); } 25% { transform: translate(-3%,-3%); }
-            50% { transform: translate(3%,1%); } 75% { transform: translate(-1%,3%); }
+            0%{transform:translate(0,0)}25%{transform:translate(-3%,-3%)}
+            50%{transform:translate(3%,1%)}75%{transform:translate(-1%,3%)}
         }
+
+        .bg-color { position:fixed;inset:0;z-index:0;background:var(--bg); }
 
         .intro { height: 1200vh; position: relative; }
-        @media (max-width: 768px) {
-            .intro { height: 600vh; }
-        }
+        @media(max-width:768px){ .intro{height:600vh;} }
         .intro-pin {
-            height: 100vh; width: 100%;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; position: relative;
+            height:100vh;width:100%;display:flex;align-items:center;justify-content:center;
+            overflow:hidden;position:relative;opacity:0;
         }
+        #particleCanvas { position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0; }
+        #disintegrateCanvas { position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0; }
 
-        #particleCanvas {
-            position: absolute; inset: 0; z-index: 1; pointer-events: none;
-        }
-        #disintegrateCanvas {
-            position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
-        }
-
-        /* Text glow - sits behind the text, changes color per stage */
         .text-glow {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px; height: 300px;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: 1; pointer-events: none;
-            background: rgba(255,252,225,0.06);
-            opacity: 0.8;
+            position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            width:500px;height:300px;border-radius:50%;filter:blur(100px);
+            z-index:1;pointer-events:none;background:rgba(255,252,225,0.06);opacity:0.8;
         }
-
         .vignette {
-            position: absolute; inset: 0; z-index: 2; pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 40%, rgba(14,16,15,0.7) 100%);
+            position:absolute;inset:0;z-index:2;pointer-events:none;
+            background:radial-gradient(ellipse at center,transparent 40%,rgba(14,16,15,0.7) 100%);
         }
+        .text-layer { position:relative;z-index:3;text-align:center; }
 
-        .text-layer {
-            position: relative; z-index: 3; text-align: center;
-        }
-
-        /* ===== ALL STAGES positioned absolutely, centered ===== */
         .stage {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0; white-space: nowrap;
+            position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            opacity:0;white-space:nowrap;
         }
 
+        /* ===== MASSIVE TEXT ===== */
         .hero-font {
-            font-size: clamp(5rem, 14vw, 13rem);
-            font-weight: 700; line-height: 1;
-            letter-spacing: -0.03em;
+            font-size: clamp(6rem, 18vw, 16rem);
+            font-weight: 800; line-height: 0.9; letter-spacing: -0.04em;
         }
+        .hindi-font { font-family:'Noto Sans Devanagari',sans-serif; }
 
-        .hindi-font { font-family: 'Noto Sans Devanagari', sans-serif; }
-        .eng-font { font-family: 'Syne', sans-serif; }
-
-        /* Entrance: everything starts hidden */
-        .intro-pin { opacity: 0; }
-        #particleCanvas { opacity: 0; }
-        .scroll-cue { opacity: 0; }
-
-        /*
-         * BULLETPROOF FIX: soch-base is position:relative so it becomes
-         * the positioning parent for punct marks. Punct marks use left:100%
-         * to sit right at the edge of Soch. No JS needed.
-         */
-
+        /* ===== GRADIENT TEXT ===== */
         .soch-base {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(5rem, 14vw, 13rem);
-            font-weight: 700; line-height: 1;
-            letter-spacing: -0.03em;
-            color: var(--cream);
-            display: inline-block;
-            position: relative;
+            font-family:'Syne',sans-serif;
+            font-size: clamp(6rem, 18vw, 16rem);
+            font-weight: 800; line-height: 0.9; letter-spacing: -0.04em;
+            display:inline-block; position:relative;
+            background: linear-gradient(135deg, #fffce1 0%, #e8d5b7 50%, #fffce1 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
         }
-
         .punct-mark {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(5rem, 14vw, 13rem);
-            font-weight: 700; line-height: 1;
-            position: absolute;
-            left: calc(100% + 0.02em);
-            bottom: 0;
-            opacity: 0;
+            font-family:'Syne',sans-serif;
+            font-size: clamp(6rem, 18vw, 16rem);
+            font-weight: 800; line-height: 0.9;
+            position:absolute; left:calc(100% + 0.02em); bottom:0; opacity:0;
+            -webkit-text-fill-color:currentColor;
         }
 
+        /* ===== CLIP-PATH SUB-LABELS ===== */
         .sub-label {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.95rem; text-transform: uppercase;
-            letter-spacing: 0.25em; font-weight: 500;
-            position: absolute;
-            top: calc(50% + clamp(3rem, 8vw, 7.5rem));
-            left: 50%; transform: translateX(-50%);
-            white-space: nowrap; opacity: 0;
+            font-family:'Syne',sans-serif;
+            font-size:1.1rem; text-transform:uppercase; letter-spacing:0.3em; font-weight:600;
+            position:absolute; top:calc(50% + clamp(4rem,10vw,9rem));
+            left:50%; transform:translateX(-50%); white-space:nowrap; opacity:0;
+            clip-path:inset(0 100% 0 0);
+        }
+        .stage-line {
+            position:absolute; top:calc(50% + clamp(2.5rem,7vw,6.5rem));
+            left:50%; transform:translateX(-50%) scaleX(0);
+            width:60px; height:1.5px; transform-origin:center;
         }
 
-        /* Sirf Ek Soch — force single line */
+        /* ===== SIRF EK SOCH ===== */
         .sirf-text {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2rem, 6vw, 5.5rem);
-            font-weight: 700; letter-spacing: -0.02em;
-            color: var(--green);
-            white-space: nowrap;
+            font-family:'Syne',sans-serif;
+            font-size:clamp(2.5rem,7vw,6rem); font-weight:800; letter-spacing:-0.02em;
+            white-space:nowrap;
+            background:linear-gradient(135deg,var(--green) 0%,#7dffb8 50%,var(--green) 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
         }
         .sirf-sub {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.95rem; text-transform: uppercase;
-            letter-spacing: 0.25em; color: var(--cream);
-            font-weight: 500; margin-top: 1.5rem; opacity: 0;
+            font-family:'Syne',sans-serif;
+            font-size:1rem; text-transform:uppercase; letter-spacing:0.3em;
+            color:var(--cream); font-weight:500; margin-top:2rem; opacity:0;
+            clip-path:inset(0 100% 0 0);
         }
 
+        /* ===== SCROLL CUE ===== */
         .scroll-cue {
-            position: absolute; bottom: 3rem; left: 50%;
-            transform: translateX(-50%); z-index: 5;
-            display: flex; flex-direction: column;
-            align-items: center; gap: 0.6rem;
+            position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);z-index:5;
+            display:flex;flex-direction:column;align-items:center;gap:0.6rem;opacity:0;
         }
-        .scroll-cue span {
-            font-size: 0.6rem; text-transform: uppercase;
-            letter-spacing: 0.35em; color: var(--surface25);
-        }
-        .scroll-cue-line {
-            width: 1px; height: 50px; position: relative; overflow: hidden;
-        }
+        .scroll-cue span { font-size:0.6rem;text-transform:uppercase;letter-spacing:0.35em;color:var(--surface25); }
+        .scroll-cue-line { width:1px;height:50px;position:relative;overflow:hidden; }
         .scroll-cue-line::after {
-            content: ''; position: absolute; top: -100%; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent, var(--cream), transparent);
-            animation: cueSlide 2s ease-in-out infinite;
+            content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;
+            background:linear-gradient(to bottom,transparent,var(--cream),transparent);
+            animation:cueSlide 2s ease-in-out infinite;
         }
-        @keyframes cueSlide { 0% { top: -100%; } 100% { top: 100%; } }
+        @keyframes cueSlide { 0%{top:-100%}100%{top:100%} }
 
-        /* PHILOSOPHY */
-        .philosophy {
-            position: relative; z-index: 5; min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            padding: 8rem 2rem;
-        }
-        .philosophy-inner { max-width: 750px; text-align: center; }
-        .phil-line {
-            font-size: clamp(1.6rem, 3.5vw, 2.8rem);
-            font-weight: 700; line-height: 1.4;
-            letter-spacing: -0.01em; margin-bottom: 0.5rem; overflow: hidden;
-        }
-        .phil-line .word { display: inline-block; transform: translateY(100%); opacity: 0; }
-        .phil-highlight { color: var(--green); }
-        .phil-divider {
-            width: 60px; height: 2px; background: var(--surface25);
-            margin: 2.5rem auto; transform: scaleX(0);
-        }
-        .phil-sub {
-            font-size: 1.05rem; color: var(--grey); line-height: 1.7;
-            font-weight: 400; margin-top: 1.5rem; opacity: 0; transform: translateY(20px);
-        }
+        /* ===== PHILOSOPHY ===== */
+        .philosophy { position:relative;z-index:5;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 2rem; }
+        .philosophy-inner { max-width:750px;text-align:center; }
+        .phil-line { font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:700;line-height:1.4;letter-spacing:-0.01em;margin-bottom:0.5rem;overflow:hidden; }
+        .phil-line .word { display:inline-block;transform:translateY(100%);opacity:0; }
+        .phil-highlight { background:linear-gradient(135deg,var(--green),#7dffb8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+        .phil-divider { width:60px;height:2px;background:var(--surface25);margin:2.5rem auto;transform:scaleX(0); }
+        .phil-sub { font-size:1.05rem;color:var(--grey);line-height:1.7;font-weight:400;margin-top:1.5rem;opacity:0;transform:translateY(20px); }
 
-        /* PLAYGROUND */
-        .playground { position: relative; z-index: 5; padding: 4rem 2rem 6rem; }
-        .pg-header { text-align: center; margin-bottom: 4rem; }
-        .pg-title {
-            font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
-            letter-spacing: -0.02em; margin-bottom: 0.75rem; opacity: 0;
-        }
-        .pg-sub { font-size: 1rem; color: var(--grey); font-weight: 400; opacity: 0; }
-        .pg-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 2rem; max-width: 900px; margin: 0 auto;
-        }
-        .pg-card {
-            background: #1a1c1b; border: 1px solid #2a2c2b; border-radius: 16px;
-            overflow: hidden; opacity: 0; transform: translateY(40px);
-            transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
-        }
-        .pg-card-body {
-            padding: 1.5rem 2rem 2rem;
-        }
-        .pg-card.clickable {
-            cursor: pointer;
-        }
-        .pg-card.clickable:hover {
-            border-color: var(--lilac); transform: translateY(-6px) !important;
-            box-shadow: 0 20px 60px rgba(157,149,255,0.08);
-        }
-        .pg-card.coming-soon {
-            opacity: 0; border-style: dashed; border-color: #2a2c2b;
-        }
-        .pg-card-icon {
-            width: 48px; height: 48px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; margin-bottom: 1.5rem;
-        }
-        .pg-card.coming-soon .pg-card-icon {
-            background: rgba(124,124,111,0.08);
-        }
-        .pg-preview {
-            display: flex; gap: 3px;
-            height: 160px;
-        }
-        .pg-preview img {
-            flex: 1; object-fit: cover; min-width: 0;
-            filter: brightness(0.85);
-            transition: filter 0.4s, flex 0.4s;
-        }
-        .pg-card.clickable:hover .pg-preview img { filter: brightness(1); }
-        .pg-card.clickable:hover .pg-preview img:hover { flex: 1.5; }
-        .pg-card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.6rem; }
-        .pg-card-desc { font-size: 0.9rem; color: var(--grey); line-height: 1.6; font-weight: 400; }
-        .pg-card-tag {
-            display: inline-block; margin-top: 1.25rem; font-size: 0.7rem;
-            text-transform: uppercase; letter-spacing: 0.12em; padding: 0.35rem 0.9rem;
-            border-radius: 100px; border: 1px solid var(--surface25); color: var(--grey);
-        }
-        .pg-card-arrow {
-            display: inline-flex; align-items: center; gap: 0.4rem;
-            margin-top: 1.5rem; font-size: 0.8rem; color: var(--lilac);
-            letter-spacing: 0.05em; font-weight: 600;
-        }
-        .pg-card-arrow svg { transition: transform 0.3s; }
-        .pg-card.clickable:hover .pg-card-arrow svg { transform: translateX(4px); }
-        .footer {
-            text-align: center; padding: 5rem 2rem; font-size: 0.85rem;
-            color: var(--surface25); position: relative; z-index: 5;
-        }
-        @media (max-width: 768px) {
-            .pg-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-            .playground { padding: 3rem 1.25rem 4rem; }
-        }
-        @media (max-width: 500px) {
-            .sirf-text { font-size: clamp(1.8rem, 8vw, 3rem); }
-        }
-
-        /* Mobile: use dvh for iOS Safari dynamic toolbar */
-        @supports (height: 100dvh) {
-            .intro-pin { height: 100dvh; }
-        }
-
-        /* Reduce glow size on mobile */
-        @media (max-width: 768px) {
-            .text-glow { width: 300px; height: 200px; filter: blur(70px); }
-        }
+        /* ===== PLAYGROUND ===== */
+        .playground { position:relative;z-index:5;padding:4rem 2rem 6rem; }
+        .pg-header { text-align:center;margin-bottom:4rem; }
+        .pg-title { font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:-0.02em;margin-bottom:0.75rem;opacity:0; }
+        .pg-sub { font-size:1rem;color:var(--grey);font-weight:400;opacity:0; }
+        .pg-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;max-width:900px;margin:0 auto; }
+        .pg-card { background:#1a1c1b;border:1px solid #2a2c2b;border-radius:16px;overflow:hidden;opacity:0;transform:translateY(40px);transition:border-color 0.4s,transform 0.4s,box-shadow 0.4s; }
+        .pg-card-body { padding:1.5rem 2rem 2rem; }
+        .pg-card.clickable { cursor:pointer; }
+        .pg-card.clickable:hover { border-color:var(--lilac);transform:translateY(-6px)!important;box-shadow:0 20px 60px rgba(157,149,255,0.08); }
+        .pg-card.coming-soon { opacity:0;border-style:dashed;border-color:#2a2c2b; }
+        .pg-card-icon { width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.5rem; }
+        .pg-preview { display:flex;gap:3px;height:160px; }
+        .pg-preview img { flex:1;object-fit:cover;min-width:0;filter:brightness(0.85);transition:filter 0.4s,flex 0.4s; }
+        .pg-card.clickable:hover .pg-preview img { filter:brightness(1); }
+        .pg-card.clickable:hover .pg-preview img:hover { flex:1.5; }
+        .pg-card-title { font-size:1.3rem;font-weight:700;margin-bottom:0.6rem; }
+        .pg-card-desc { font-size:0.9rem;color:var(--grey);line-height:1.6;font-weight:400; }
+        .pg-card-tag { display:inline-block;margin-top:1.25rem;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.12em;padding:0.35rem 0.9rem;border-radius:100px;border:1px solid var(--surface25);color:var(--grey); }
+        .pg-card-arrow { display:inline-flex;align-items:center;gap:0.4rem;margin-top:1.5rem;font-size:0.8rem;color:var(--lilac);letter-spacing:0.05em;font-weight:600; }
+        .pg-card-arrow svg { transition:transform 0.3s; }
+        .pg-card.clickable:hover .pg-card-arrow svg { transform:translateX(4px); }
+        .footer { text-align:center;padding:5rem 2rem;font-size:0.85rem;color:var(--surface25);position:relative;z-index:5; }
+        @media(max-width:768px){ .pg-grid{grid-template-columns:1fr;gap:1.5rem;} .playground{padding:3rem 1.25rem 4rem;} }
+        @media(max-width:500px){ .sirf-text{font-size:clamp(1.8rem,8vw,3rem);} }
+        @supports(height:100dvh){ .intro-pin{height:100dvh;} }
+        @media(max-width:768px){ .text-glow{width:300px;height:200px;filter:blur(70px);} }
     </style>
 </head>
 <body>
 <div class="grain"></div>
-
-<!-- Loading screen -->
-<div id="loader" style="position:fixed;inset:0;z-index:9999;background:#0e100f;display:flex;align-items:center;justify-content:center;">
-</div>
+<div id="loader"></div>
+<div class="bg-color" id="bgColor"></div>
 
 <div id="smooth-wrapper">
 <div id="smooth-content">
@@ -293,33 +181,23 @@
         <canvas id="disintegrateCanvas"></canvas>
         <div class="text-glow" id="textGlow"></div>
         <div class="vignette"></div>
-
         <div class="text-layer">
-            <!-- Stage 0: सोच -->
-            <div class="stage" id="s0">
-                <div class="hero-font hindi-font" id="hindiText">सोच</div>
-            </div>
-
-            <!-- Stage 1-4: Soch with punctuation -->
+            <div class="stage" id="s0"><div class="hero-font hindi-font" id="hindiText">सोच</div></div>
             <div class="stage" id="sEng">
                 <span class="soch-base" id="sochWord"><span id="sochLetters">Soch</span><span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span><span class="punct-mark" id="pE" style="color:var(--orange)">!</span><span class="punct-mark" id="pP" style="color:var(--red)">.</span></span>
-                <!-- Subtexts -->
+                <div class="stage-line" id="lineQ" style="background:var(--lilac);"></div>
+                <div class="stage-line" id="lineE" style="background:var(--orange);"></div>
+                <div class="stage-line" id="lineP" style="background:var(--red);"></div>
                 <div class="sub-label" id="subQ" style="color:var(--lilac)">the question</div>
                 <div class="sub-label" id="subE" style="color:var(--orange)">the spark</div>
                 <div class="sub-label" id="subP" style="color:var(--red)">the conviction</div>
             </div>
-
-            <!-- Stage 5: Sirf Ek Soch -->
             <div class="stage" id="sSirf" style="text-align:center;">
                 <div class="sirf-text" id="sirfText">Sirf Ek Soch</div>
                 <div class="sirf-sub" id="sirfSub">just one thought is all it takes</div>
             </div>
         </div>
-
-        <div class="scroll-cue" id="scrollCue">
-            <span>Scroll</span>
-            <div class="scroll-cue-line"></div>
-        </div>
+        <div class="scroll-cue" id="scrollCue"><span>Scroll</span><div class="scroll-cue-line"></div></div>
     </div>
 </section>
 
@@ -366,8 +244,7 @@
 </section>
 <div class="footer">soch.me · built with curiosity</div>
 
-</div><!-- smooth-content -->
-</div><!-- smooth-wrapper -->
+</div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/ScrollTrigger.min.js"></script>
@@ -377,422 +254,173 @@
 <script>
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, CustomEase);
 
-// Create smooth scroller — falls back gracefully if ScrollSmoother doesn't load
-if (typeof ScrollSmoother !== 'undefined') {
-    ScrollSmoother.create({
-        wrapper: '#smooth-wrapper',
-        content: '#smooth-content',
-        smooth: 1.5,
-        effects: true,
-    });
-}
+if(typeof ScrollSmoother!=='undefined'){ScrollSmoother.create({wrapper:'#smooth-wrapper',content:'#smooth-content',smooth:1.5,effects:true});}
+if(typeof CustomEase!=='undefined'){CustomEase.create('cinematic','0.25,0.1,0.25,1');}
 
-// Custom easing for cinematic feel
-if (typeof CustomEase !== 'undefined') {
-    CustomEase.create('smooth', '0.45,0.05,0.55,0.95');
-}
-
-// ===== ENTRANCE ANIMATION (auto-plays after full page load) =====
-window.addEventListener('load', () => {
-    document.body.style.overflow = 'hidden';
-    const loader = document.getElementById('loader');
-
-    // Split Hindi text into characters for letter-level animation
-    const hindiSplit = (typeof SplitText !== 'undefined') 
-        ? new SplitText('#hindiText', {type:'chars'}) 
-        : null;
-
-    // Hide chars initially
-    if (hindiSplit && hindiSplit.chars.length) {
-        gsap.set(hindiSplit.chars, {opacity:0, y:80, filter:'blur(8px)'});
-    } else {
-        gsap.set('#hindiText', {opacity:0, y:60, filter:'blur(12px)'});
-    }
-
-    const entrance = gsap.timeline({
-        delay: 0.2,
-        onComplete: () => {
-            document.body.style.overflow = '';
-            gsap.to('.scroll-cue', {opacity:1, y:0, duration:1, ease:'power2.out'});
-        }
-    });
-
-    // 0. Kill the loader
-    entrance.to(loader, {opacity:0, duration:0.5, ease:'power2.inOut', onComplete:()=>{loader.style.display='none';}})
-
-    // 1. Scene awakens
-    .to('#introPin', {opacity:1, duration:1.2, ease:'power2.inOut'})
-
-    // 2. Particles emerge
-    .to('#particleCanvas', {opacity:1, duration:2, ease:'power3.out'}, '-=0.5')
-
-    // 3. Glow breathes to life
-    .fromTo('#textGlow', 
-        {opacity:0, scale:0.3}, 
-        {opacity:1, scale:1, duration:1.5, ease:'power3.out'}, 
-        '-=1.5'
-    )
-
-    // 4. सोच chars drop in with stagger
-    if (hindiSplit && hindiSplit.chars.length) {
-        entrance.to(hindiSplit.chars, {
-            opacity:1, y:0, filter:'blur(0px)',
-            duration:1, stagger:0.2, ease:'back.out(1.4)',
-        }, '-=0.8');
-    } else {
-        entrance.to('#hindiText', {
-            opacity:1, y:0, filter:'blur(0px)', 
-            duration:1.2, ease:'power3.out'
-        }, '-=0.8');
-    }
-
-    // 5. Grain texture
-    entrance.fromTo('.grain', {opacity:0}, {opacity:0.035, duration:0.8}, '-=0.5');
-
-    // Store hindiSplit globally for the scroll transition
-    window._hindiSplit = hindiSplit;
-});
-
-gsap.set('.scroll-cue', {y:20});
-
-// ===== PUNCT POSITIONING: handled purely by CSS (left:100%, top:0) =====
-// No JS needed — punct marks are children of soch-base with position:relative
+const isMobile=window.innerWidth<768;
+const bgEl=document.getElementById('bgColor');
 
 // ===== PARTICLES =====
-const canvas = document.getElementById('particleCanvas');
-const ctx = canvas.getContext('2d');
-let pts = [];
-let pC = {r:255,g:252,b:225,speed:1,burst:false,calm:false};
-
+const canvas=document.getElementById('particleCanvas');const ctx=canvas.getContext('2d');
+let pts=[];let pC={r:255,g:252,b:225,speed:1,burst:false,calm:false};
 function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
-resize(); addEventListener('resize',resize);
+resize();addEventListener('resize',resize);
 
-class Pt {
+class Pt{
     constructor(){this.init();}
-    init(){
-        this.x=Math.random()*canvas.width;
-        this.y=Math.random()*canvas.height;
-        this.sz=Math.random()*2.5+0.5; this.bSz=this.sz;
-        this.vx=(Math.random()-0.5)*0.5;
-        this.vy=(Math.random()-0.5)*0.5;
-        this.op=Math.random()*0.5+0.1; this.bOp=this.op;
-        this.ph=Math.random()*Math.PI*2;
-        this.ps=Math.random()*0.015+0.005;
-    }
-    update(){
-        this.ph+=this.ps;
-        const p=Math.sin(this.ph)*0.35+0.65;
-        this.op=this.bOp*p;
-        this.sz=this.bSz*(p*0.4+0.8);
-        if(pC.burst){
-            const cx=canvas.width/2,cy=canvas.height/2;
-            const dx=this.x-cx,dy=this.y-cy;
-            const d=Math.sqrt(dx*dx+dy*dy)||1;
-            this.x+=(dx/d)*3;this.y+=(dy/d)*3;
-            this.sz=this.bSz*1.8;
-        } else if(pC.calm){
-            this.x+=this.vx*0.2;this.y+=this.vy*0.2;
-            this.op=this.bOp*0.7;
-        } else {
-            this.x+=this.vx*pC.speed;this.y+=this.vy*pC.speed;
-        }
-        if(this.x<-20)this.x=canvas.width+20;
-        if(this.x>canvas.width+20)this.x=-20;
-        if(this.y<-20)this.y=canvas.height+20;
-        if(this.y>canvas.height+20)this.y=-20;
-    }
-    draw(){
-        ctx.beginPath();
-        ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);
-        ctx.fillStyle=`rgba(${pC.r},${pC.g},${pC.b},${this.op})`;
-        ctx.fill();
-    }
+    init(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.sz=Math.random()*2.5+0.5;this.bSz=this.sz;this.vx=(Math.random()-0.5)*0.5;this.vy=(Math.random()-0.5)*0.5;this.op=Math.random()*0.5+0.1;this.bOp=this.op;this.ph=Math.random()*Math.PI*2;this.ps=Math.random()*0.015+0.005;}
+    update(){this.ph+=this.ps;const p=Math.sin(this.ph)*0.35+0.65;this.op=this.bOp*p;this.sz=this.bSz*(p*0.4+0.8);if(pC.burst){const cx=canvas.width/2,cy=canvas.height/2,dx=this.x-cx,dy=this.y-cy,d=Math.sqrt(dx*dx+dy*dy)||1;this.x+=(dx/d)*3;this.y+=(dy/d)*3;this.sz=this.bSz*1.8;}else if(pC.calm){this.x+=this.vx*0.2;this.y+=this.vy*0.2;this.op=this.bOp*0.7;}else{this.x+=this.vx*pC.speed;this.y+=this.vy*pC.speed;}if(this.x<-20)this.x=canvas.width+20;if(this.x>canvas.width+20)this.x=-20;if(this.y<-20)this.y=canvas.height+20;if(this.y>canvas.height+20)this.y=-20;}
+    draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);ctx.fillStyle=`rgba(${pC.r},${pC.g},${pC.b},${this.op})`;ctx.fill();}
 }
-const isMobile = window.innerWidth < 768;
 for(let i=0;i<(isMobile?40:80);i++)pts.push(new Pt());
 
-// ===== FLOATING ORBS — larger, softer, slower =====
-let orbs = [];
-class Orb {
-    constructor(){
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.sz = Math.random() * 25 + 15; // 15-40px radius
-        this.baseX = this.x;
-        this.baseY = this.y;
-        this.driftX = Math.random() * 80 + 40; // how far it drifts
-        this.driftY = Math.random() * 60 + 30;
-        this.spdX = Math.random() * 0.0004 + 0.0002; // very slow
-        this.spdY = Math.random() * 0.0003 + 0.0002;
-        this.phX = Math.random() * Math.PI * 2;
-        this.phY = Math.random() * Math.PI * 2;
-        this.op = Math.random() * 0.04 + 0.02; // very subtle: 0.02-0.06
-        this.pulseSpd = Math.random() * 0.002 + 0.001;
-        this.pulsePh = Math.random() * Math.PI * 2;
-    }
-    update(){
-        this.phX += this.spdX;
-        this.phY += this.spdY;
-        this.pulsePh += this.pulseSpd;
-        this.x = this.baseX + Math.sin(this.phX) * this.driftX;
-        this.y = this.baseY + Math.cos(this.phY) * this.driftY;
-        // wrap
-        if(this.x < -50) this.baseX += canvas.width + 100;
-        if(this.x > canvas.width + 50) this.baseX -= canvas.width + 100;
-        if(this.y < -50) this.baseY += canvas.height + 100;
-        if(this.y > canvas.height + 50) this.baseY -= canvas.height + 100;
-    }
-    draw(){
-        const pulse = Math.sin(this.pulsePh) * 0.3 + 0.7; // 0.4-1.0
-        const curOp = this.op * pulse;
-        const curSz = this.sz * (pulse * 0.3 + 0.85);
-        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, curSz);
-        grad.addColorStop(0, `rgba(${pC.r},${pC.g},${pC.b},${curOp})`);
-        grad.addColorStop(0.4, `rgba(${pC.r},${pC.g},${pC.b},${curOp * 0.5})`);
-        grad.addColorStop(1, `rgba(${pC.r},${pC.g},${pC.b},0)`);
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, curSz, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
-    }
+let orbs=[];
+class Orb{
+    constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.sz=Math.random()*25+15;this.baseX=this.x;this.baseY=this.y;this.driftX=Math.random()*80+40;this.driftY=Math.random()*60+30;this.spdX=Math.random()*0.0004+0.0002;this.spdY=Math.random()*0.0003+0.0002;this.phX=Math.random()*Math.PI*2;this.phY=Math.random()*Math.PI*2;this.op=Math.random()*0.04+0.02;this.pulseSpd=Math.random()*0.002+0.001;this.pulsePh=Math.random()*Math.PI*2;}
+    update(){this.phX+=this.spdX;this.phY+=this.spdY;this.pulsePh+=this.pulseSpd;this.x=this.baseX+Math.sin(this.phX)*this.driftX;this.y=this.baseY+Math.cos(this.phY)*this.driftY;if(this.x<-50)this.baseX+=canvas.width+100;if(this.x>canvas.width+50)this.baseX-=canvas.width+100;if(this.y<-50)this.baseY+=canvas.height+100;if(this.y>canvas.height+50)this.baseY-=canvas.height+100;}
+    draw(){const pulse=Math.sin(this.pulsePh)*0.3+0.7;const curOp=this.op*pulse;const curSz=this.sz*(pulse*0.3+0.85);const grad=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,curSz);grad.addColorStop(0,`rgba(${pC.r},${pC.g},${pC.b},${curOp})`);grad.addColorStop(0.4,`rgba(${pC.r},${pC.g},${pC.b},${curOp*0.5})`);grad.addColorStop(1,`rgba(${pC.r},${pC.g},${pC.b},0)`);ctx.beginPath();ctx.arc(this.x,this.y,curSz,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();}
 }
-for(let i=0;i<(isMobile?6:12);i++) orbs.push(new Orb());
+for(let i=0;i<(isMobile?6:12);i++)orbs.push(new Orb());
 
-function drawLines(){
-    for(let i=0;i<pts.length;i++){
-        for(let j=i+1;j<pts.length;j++){
-            const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
-            const d=Math.sqrt(dx*dx+dy*dy);
-            if(d<110){
-                ctx.beginPath();
-                ctx.moveTo(pts[i].x,pts[i].y);
-                ctx.lineTo(pts[j].x,pts[j].y);
-                ctx.strokeStyle=`rgba(${pC.r},${pC.g},${pC.b},${(1-d/110)*0.05})`;
-                ctx.lineWidth=0.5;ctx.stroke();
-            }
-        }
-    }
-}
-function pLoop(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    orbs.forEach(o=>{o.update();o.draw();});
-    pts.forEach(p=>{p.update();p.draw();});
-    if(!isMobile) drawLines();
-    requestAnimationFrame(pLoop);
-}
+function drawLines(){for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(${pC.r},${pC.g},${pC.b},${(1-d/110)*0.05})`;ctx.lineWidth=0.5;ctx.stroke();}}}}
+function pLoop(){ctx.clearRect(0,0,canvas.width,canvas.height);orbs.forEach(o=>{o.update();o.draw();});pts.forEach(p=>{p.update();p.draw();});if(!isMobile)drawLines();requestAnimationFrame(pLoop);}
 pLoop();
 
 // ===== DISINTEGRATION =====
-const dC=document.getElementById('disintegrateCanvas');
-const dX=dC.getContext('2d');
-let dP=[],disin=false;
-function resizeD(){dC.width=innerWidth;dC.height=innerHeight;}
-resizeD();addEventListener('resize',resizeD);
-
-class DP{
-    constructor(x,y){
-        this.x=x;this.y=y;
-        this.sz=Math.random()*3+1;
-        this.vx=(Math.random()-0.5)*3;
-        this.vy=(Math.random()-0.5)*3+0.5;
-        this.g=0.02+Math.random()*0.02;
-        this.op=1;this.dc=0.002+Math.random()*0.003;
-        this.rot=Math.random()*360;
-        this.rs=(Math.random()-0.5)*10;
-    }
-    update(){
-        this.x+=this.vx;this.y+=this.vy;
-        this.vy+=this.g;this.vx*=0.99;
-        this.op-=this.dc;this.rot+=this.rs;
-        if(this.op<0)this.op=0;
-    }
-    draw(){
-        dX.save();dX.translate(this.x,this.y);
-        dX.rotate(this.rot*Math.PI/180);
-        dX.fillStyle=`rgba(171,255,132,${this.op})`;
-        dX.fillRect(-this.sz/2,-this.sz/2,this.sz,this.sz);
-        dX.restore();
-    }
-}
-function spawnD(){
-    // Ensure canvas is properly sized
-    dC.width=innerWidth;dC.height=innerHeight;
-    const el=document.getElementById('sirfText');
-    const r=el.getBoundingClientRect();dP=[];
-    // If text is not visible (opacity 0), use center of screen
-    const cx = r.width > 0 ? r.left + r.width/2 : innerWidth/2;
-    const cy = r.height > 0 ? r.top + r.height/2 : innerHeight/2;
-    const w = r.width > 0 ? r.width : 300;
-    const h = r.height > 0 ? r.height : 80;
-    const count = isMobile ? 100 : 200;
-    for(let i=0;i<count;i++){
-        dP.push(new DP(cx - w/2 + Math.random()*w, cy - h/2 + Math.random()*h));
-    }
-    disin=true;dC.style.opacity='1';
-}
-function dLoop(){
-    if(!disin){requestAnimationFrame(dLoop);return;}
-    dX.clearRect(0,0,dC.width,dC.height);
-    let alive=false;
-    dP.forEach(p=>{p.update();p.draw();if(p.op>0)alive=true;});
-    if(!alive){disin=false;dC.style.opacity=0;}
-    requestAnimationFrame(dLoop);
-}
+const dC=document.getElementById('disintegrateCanvas');const dX=dC.getContext('2d');let dP=[],disin=false;
+function resizeD(){dC.width=innerWidth;dC.height=innerHeight;}resizeD();addEventListener('resize',resizeD);
+class DP{constructor(x,y){this.x=x;this.y=y;this.sz=Math.random()*3+1;this.vx=(Math.random()-0.5)*3;this.vy=(Math.random()-0.5)*3+0.5;this.g=0.02+Math.random()*0.02;this.op=1;this.dc=0.002+Math.random()*0.003;this.rot=Math.random()*360;this.rs=(Math.random()-0.5)*10;}update(){this.x+=this.vx;this.y+=this.vy;this.vy+=this.g;this.vx*=0.99;this.op-=this.dc;this.rot+=this.rs;if(this.op<0)this.op=0;}draw(){dX.save();dX.translate(this.x,this.y);dX.rotate(this.rot*Math.PI/180);dX.fillStyle=`rgba(171,255,132,${this.op})`;dX.fillRect(-this.sz/2,-this.sz/2,this.sz,this.sz);dX.restore();}}
+function spawnD(){dC.width=innerWidth;dC.height=innerHeight;const el=document.getElementById('sirfText');const r=el.getBoundingClientRect();dP=[];const cx=r.width>0?r.left+r.width/2:innerWidth/2;const cy=r.height>0?r.top+r.height/2:innerHeight/2;const w=r.width>0?r.width:300;const h=r.height>0?r.height:80;for(let i=0;i<(isMobile?100:200);i++){dP.push(new DP(cx-w/2+Math.random()*w,cy-h/2+Math.random()*h));}disin=true;dC.style.opacity='1';}
+function dLoop(){if(!disin){requestAnimationFrame(dLoop);return;}dX.clearRect(0,0,dC.width,dC.height);let alive=false;dP.forEach(p=>{p.update();p.draw();if(p.op>0)alive=true;});if(!alive){disin=false;dC.style.opacity=0;}requestAnimationFrame(dLoop);}
 dLoop();
 
 // ===== AMBIENT =====
 gsap.set('#s0',{opacity:1});
-// Gentle pulse on the text glow
 gsap.to('#textGlow',{scale:1.1,opacity:0.9,duration:4,ease:'sine.inOut',yoyo:true,repeat:-1});
-gsap.to('#hindiText',{scale:1.03,duration:3,ease:'sine.inOut',yoyo:true,repeat:-1});
+
+// ===== ENTRANCE =====
+window.addEventListener('load',()=>{
+    document.body.style.overflow='hidden';
+    const loader=document.getElementById('loader');
+    const hindiSplit=(typeof SplitText!=='undefined')?new SplitText('#hindiText',{type:'chars'}):null;
+    if(hindiSplit&&hindiSplit.chars.length){gsap.set(hindiSplit.chars,{opacity:0,y:120,scale:0.3,filter:'blur(10px)'});}
+    else{gsap.set('#hindiText',{opacity:0,y:60,filter:'blur(12px)'});}
+
+    const entrance=gsap.timeline({delay:0.3,onComplete:()=>{document.body.style.overflow='';gsap.to('.scroll-cue',{opacity:1,y:0,duration:1.2,ease:'power2.out'});}});
+
+    entrance.to(loader,{opacity:0,duration:0.6,ease:'power2.inOut',onComplete:()=>{loader.style.display='none';}})
+    .to('#introPin',{opacity:1,duration:1.5,ease:'power2.inOut'})
+    .to('#particleCanvas',{opacity:1,duration:2.5,ease:'power3.out'},'-=0.8')
+    .fromTo('#textGlow',{opacity:0,scale:0.2},{opacity:1,scale:1,duration:2,ease:'power3.out'},'-=2');
+
+    if(hindiSplit&&hindiSplit.chars.length){
+        entrance.to(hindiSplit.chars,{opacity:1,y:0,scale:1,filter:'blur(0px)',duration:1.2,stagger:0.25,ease:'back.out(1.7)'},'-=1');
+    }else{
+        entrance.to('#hindiText',{opacity:1,y:0,filter:'blur(0px)',duration:1.4,ease:'power3.out'},'-=1');
+    }
+    entrance.fromTo('.grain',{opacity:0},{opacity:0.035,duration:1},'-=0.5');
+    window._hindiSplit=hindiSplit;
+});
+gsap.set('.scroll-cue',{y:20});
+
+// ===== HELPERS =====
+function setGradient(stage){
+    const g={
+        default:'linear-gradient(135deg,#fffce1 0%,#e8d5b7 50%,#fffce1 100%)',
+        question:'linear-gradient(135deg,#fffce1 0%,#c4bfff 40%,#9d95ff 100%)',
+        spark:'linear-gradient(135deg,#fffce1 0%,#ffc877 40%,#ff8709 100%)',
+        conviction:'linear-gradient(135deg,#fffce1 0%,#ff9999 40%,#ff4444 100%)',
+    };
+    document.getElementById('sochWord').style.backgroundImage=g[stage]||g.default;
+}
+function setBg(hex){gsap.to(bgEl,{backgroundColor:hex,duration:2,ease:'power2.inOut'});}
 
 // ===== MASTER TIMELINE =====
-const tl=gsap.timeline({
-    scrollTrigger:{
-        trigger:'#intro',start:'top top',end:'bottom bottom',
-        pin:'#introPin',scrub:isMobile?2.5:1.5,anticipatePin:1,
-    }
-});
+const tl=gsap.timeline({scrollTrigger:{trigger:'#intro',start:'top top',end:'bottom bottom',pin:'#introPin',scrub:isMobile?2.5:1.5,anticipatePin:1}});
 
 // ---- सोच holds ----
-tl.to({},{duration:5});
-
-// ---- सोच → Soch (letter-level blur crossfade) ----
-const sochSplit = (typeof SplitText !== 'undefined')
-    ? new SplitText('#sochLetters', {type:'chars'})
-    : null;
-
-// Prepare: show sEng container but hide the word
-tl.set('#sEng',{opacity:1});
-tl.set('#sochWord',{opacity:1});
-if (sochSplit) {
-    gsap.set(sochSplit.chars, {opacity:0, filter:'blur(10px)', y:40});
-}
-
-// Hindi chars blur out with stagger
-const hs = window._hindiSplit;
-if (hs && hs.chars && hs.chars.length) {
-    tl.to(hs.chars, {
-        opacity:0, filter:'blur(15px)', y:-40,
-        duration:2, stagger:0.12, ease:'power2.in',
-    });
-} else {
-    tl.to('#hindiText',{opacity:0, filter:'blur(15px)', duration:3, ease:'power2.in'});
-}
-
-tl.set('#s0',{opacity:0});
-
-// English chars blur in with stagger — overlaps with hindi exit
-if (sochSplit) {
-    tl.to(sochSplit.chars, {
-        opacity:1, filter:'blur(0px)', y:0,
-        duration:2, stagger:0.15, ease:'back.out(1.2)',
-    }, '-=1.5');
-} else {
-    tl.fromTo('#sochWord',
-        {opacity:0, filter:'blur(15px)'},
-        {opacity:1, filter:'blur(0px)', duration:4, ease:'power2.out'},
-        '-=2'
-    );
-}
-
-tl.to('#textGlow',{background:'rgba(255,252,225,0.08)',width:550,height:320,duration:3},'<');
-
-// ---- Soch holds ----
 tl.to({},{duration:4});
 
-// ---- ? materializes — wonder ----
-tl.call(()=>{gsap.to(pC,{r:157,g:149,b:255,duration:2});})
-.fromTo('#pQ',{opacity:0, scale:0.3},{
-    opacity:1, scale:1, duration:8, ease:'power2.out',
-})
-.to('#textGlow',{background:'rgba(157,149,255,0.12)',width:650,height:380,duration:6},'<')
-.to('#subQ',{opacity:0.7,duration:4},'-=4');
+// ---- सोच → Soch ----
+const sochSplit=(typeof SplitText!=='undefined')?new SplitText('#sochLetters',{type:'chars'}):null;
+tl.set('#sEng',{opacity:1}).set('#sochWord',{opacity:1});
+if(sochSplit)gsap.set(sochSplit.chars,{opacity:0,y:60,filter:'blur(8px)'});
 
-// ---- Soch? holds ----
+tl.call(()=>{const hs=window._hindiSplit;if(hs&&hs.chars.length){gsap.to(hs.chars,{opacity:0,y:-50,filter:'blur(12px)',duration:0.6,stagger:0.08,ease:'power2.in'});}})
+.to('#hindiText',{opacity:0,filter:'blur(15px)',duration:2,ease:'power2.in'})
+.set('#s0',{opacity:0});
+
+if(sochSplit){tl.to(sochSplit.chars,{opacity:1,y:0,filter:'blur(0px)',duration:1.5,stagger:0.2,ease:'back.out(1.5)'},'-=1');}
+else{tl.fromTo('#sochWord',{opacity:0,filter:'blur(15px)'},{opacity:1,filter:'blur(0px)',duration:3,ease:'power2.out'},'-=1.5');}
+tl.to('#textGlow',{background:'rgba(255,252,225,0.08)',width:550,height:320,duration:2},'<');
+
+// ---- Soch holds ----
+tl.to({},{duration:3});
+
+// ---- ? ----
+tl.call(()=>{gsap.to(pC,{r:157,g:149,b:255,duration:2});setGradient('question');setBg('#0e0f14');})
+.fromTo('#pQ',{opacity:0,scale:0.3,filter:'blur(8px)'},{opacity:1,scale:1,filter:'blur(0px)',duration:6,ease:'power2.out'})
+.to('#textGlow',{background:'rgba(157,149,255,0.14)',width:680,height:400,duration:5},'<')
+.to('#lineQ',{scaleX:1,duration:3,ease:'power2.inOut'},'-=4')
+.to('#subQ',{opacity:0.8,clipPath:'inset(0 0% 0 0)',duration:3,ease:'power2.out'},'-=2');
+
+tl.to({},{duration:4});
+
+// ---- ? → ! ----
+tl.to('#pQ',{opacity:0,scale:0.6,filter:'blur(6px)',duration:2,ease:'power2.inOut'})
+.to('#subQ',{opacity:0,clipPath:'inset(0 0 0 100%)',duration:1.5},'<')
+.to('#lineQ',{scaleX:0,duration:1.5},'<')
+.call(()=>{gsap.to(pC,{r:255,g:135,b:9,duration:1});setGradient('spark');setBg('#14110e');pC.burst=true;setTimeout(()=>{pC.burst=false;},800);})
+.fromTo('#pE',{scale:3,opacity:0,y:-20,filter:'blur(10px)'},{scale:1,opacity:1,y:0,filter:'blur(0px)',duration:4,ease:'back.out(2)'})
+.to('#textGlow',{background:'rgba(255,135,9,0.15)',width:700,height:420,duration:3},'<')
+.to('#lineE',{scaleX:1,duration:2.5,ease:'power2.inOut'},'-=3')
+.to('#subE',{opacity:0.8,clipPath:'inset(0 0% 0 0)',duration:2.5,ease:'power2.out'},'-=2');
+
+tl.to({},{duration:4});
+
+// ---- ! → . ----
+tl.to('#pE',{opacity:0,scale:0.6,filter:'blur(6px)',duration:2,ease:'power2.inOut'})
+.to('#subE',{opacity:0,clipPath:'inset(0 0 0 100%)',duration:1.5},'<')
+.to('#lineE',{scaleX:0,duration:1.5},'<')
+.call(()=>{gsap.to(pC,{r:255,g:68,b:68,duration:1.5});setGradient('conviction');setBg('#140e0e');pC.calm=true;pC.speed=0.3;})
+.fromTo('#pP',{y:-80,opacity:0,filter:'blur(6px)'},{y:0,opacity:1,filter:'blur(0px)',duration:3.5,ease:'bounce.out'})
+.to('#textGlow',{background:'rgba(255,68,68,0.18)',width:680,height:400,duration:3},'<')
+.to('#lineP',{scaleX:1,duration:2.5,ease:'power2.inOut'},'-=3')
+.to('#subP',{opacity:0.8,clipPath:'inset(0 0% 0 0)',duration:2.5,ease:'power2.out'},'-=2');
+
 tl.to({},{duration:5});
-
-// ---- ? → ! — direct swap, no palette cleanser ----
-tl.to('#pQ',{opacity:0,scale:0.8,duration:2,ease:'power2.inOut'})
-.to('#subQ',{opacity:0,duration:1.5},'<')
-.call(()=>{
-    gsap.to(pC,{r:255,g:135,b:9,duration:1});
-    pC.burst=true;setTimeout(()=>{pC.burst=false;},800);
-})
-.fromTo('#pE',{scale:2.5,opacity:0,y:-15},{
-    scale:1,opacity:1,y:0,duration:5,ease:'back.out(1.7)',
-})
-.to('#textGlow',{background:'rgba(255,135,9,0.13)',width:680,height:400,duration:4},'<')
-.to('#subE',{opacity:0.7,duration:3},'-=3');
-
-// ---- Soch! holds ----
-tl.to({},{duration:5});
-
-// ---- ! → . — direct swap ----
-tl.to('#pE',{opacity:0,scale:0.8,duration:2,ease:'power2.inOut'})
-.to('#subE',{opacity:0,duration:1.5},'<')
-.call(()=>{
-    gsap.to(pC,{r:255,g:68,b:68,duration:1.5});
-    pC.calm=true;pC.speed=0.3;
-})
-.fromTo('#pP',{y:-60,opacity:0},{
-    y:0,opacity:1,duration:4,ease:'bounce.out',
-})
-.to('#textGlow',{background:'rgba(255,68,68,0.16)',width:650,height:380,duration:4},'<')
-.to('#subP',{opacity:0.7,duration:3},'-=2');
-
-// ---- Soch. holds ----
-tl.to({},{duration:6});
 
 // ---- Soch. → Sirf Ek Soch ----
-tl.to('#sEng',{opacity:0,scale:0.95,duration:3,ease:'power2.in'})
+tl.to('#sEng',{opacity:0,scale:0.9,filter:'blur(8px)',duration:3,ease:'power2.in'})
+.to('#lineP',{scaleX:0,duration:1},'<').to('#subP',{opacity:0,duration:1},'<')
 .to('#textGlow',{opacity:0.3,duration:2},'<')
-.set('#sEng',{opacity:0})
-.set('#sSirf',{opacity:1})
-.call(()=>{
-    gsap.to(pC,{r:171,g:255,b:132,duration:2});
-    pC.calm=false;pC.speed=0.8;
-})
-.fromTo('#sirfText',{opacity:0,scale:0.4,y:60,filter:'blur(8px)'},{
-    opacity:1,scale:1,y:0,filter:'blur(0px)',duration:10,ease:'power2.out',
-})
-.to('#textGlow',{background:'rgba(171,255,132,0.12)',width:750,height:380,opacity:1,duration:8},'<2')
-.fromTo('#sirfSub',{opacity:0,y:20},{opacity:0.7,y:0,duration:5,ease:'power2.out'},'-=3');
+.set('#sEng',{opacity:0}).set('#sSirf',{opacity:1})
+.call(()=>{gsap.to(pC,{r:171,g:255,b:132,duration:2});setBg('#0e140f');pC.calm=false;pC.speed=0.8;})
+.fromTo('#sirfText',{opacity:0,scale:0.3,y:80,filter:'blur(12px)'},{opacity:1,scale:1,y:0,filter:'blur(0px)',duration:8,ease:'power2.out'})
+.to('#textGlow',{background:'rgba(171,255,132,0.14)',width:780,height:400,opacity:1,duration:6},'<2')
+.to('#sirfSub',{opacity:0.7,clipPath:'inset(0 0% 0 0)',duration:4,ease:'power2.out'},'-=3');
 
-// ---- Sirf Ek Soch holds ----
-tl.to({},{duration:8});
+tl.to({},{duration:6});
 
 // ---- Disintegration ----
-tl.call(()=>{spawnD();})
-.to('#sirfText',{opacity:0,scale:1.08,filter:'blur(5px)',duration:5,ease:'power2.in'})
-.to('#sirfSub',{opacity:0,duration:3},'<')
-.to('#textGlow',{opacity:0,duration:4},'<')
-// Hold while particles scatter — they're visible here
-.to({},{duration:4})
-// Then slowly fade the whole pinned section
+tl.call(()=>{spawnD();setBg('#0e100f');})
+.to('#sirfText',{opacity:0,scale:1.1,filter:'blur(8px)',duration:4,ease:'power2.in'})
+.to('#sirfSub',{opacity:0,clipPath:'inset(0 0 0 100%)',duration:2},'<')
+.to('#textGlow',{opacity:0,duration:3},'<')
+.to({},{duration:3})
 .to('#introPin',{opacity:0,duration:3,ease:'power2.in'});
 
 tl.to('#scrollCue',{opacity:0,duration:2},0.5);
 
 // ===== PHILOSOPHY =====
-document.querySelectorAll('.phil-line .word').forEach((w,i)=>{
-    gsap.to(w,{y:0,opacity:1,duration:1,delay:i*0.2,ease:'power3.out',
-        scrollTrigger:{trigger:'#philosophy',start:'top 85%',toggleActions:'play none none reverse'}});
-});
-gsap.to('#philDivider',{scaleX:1,duration:1,delay:0.6,ease:'power2.inOut',
-    scrollTrigger:{trigger:'#philosophy',start:'top 80%',toggleActions:'play none none reverse'}});
-gsap.to('#philSub',{opacity:1,y:0,duration:1.2,delay:1,ease:'power2.out',
-    scrollTrigger:{trigger:'#philosophy',start:'top 75%',toggleActions:'play none none reverse'}});
+document.querySelectorAll('.phil-line .word').forEach((w,i)=>{gsap.to(w,{y:0,opacity:1,duration:1,delay:i*0.2,ease:'power3.out',scrollTrigger:{trigger:'#philosophy',start:'top 85%',toggleActions:'play none none reverse'}});});
+gsap.to('#philDivider',{scaleX:1,duration:1,delay:0.6,ease:'power2.inOut',scrollTrigger:{trigger:'#philosophy',start:'top 80%',toggleActions:'play none none reverse'}});
+gsap.to('#philSub',{opacity:1,y:0,duration:1.2,delay:1,ease:'power2.out',scrollTrigger:{trigger:'#philosophy',start:'top 75%',toggleActions:'play none none reverse'}});
 
 // ===== PLAYGROUND =====
-gsap.to('#pgTitle',{opacity:1,duration:0.8,ease:'power3.out',
-    scrollTrigger:{trigger:'#playground',start:'top 70%',toggleActions:'play none none reverse'}});
-gsap.to('#pgSub',{opacity:1,duration:0.8,delay:0.15,ease:'power3.out',
-    scrollTrigger:{trigger:'#playground',start:'top 70%',toggleActions:'play none none reverse'}});
-gsap.utils.toArray('.pg-card').forEach((c,i)=>{
-    gsap.to(c,{opacity:1,y:0,duration:0.7,delay:i*0.12,ease:'power3.out',
-        scrollTrigger:{trigger:c,start:'top 85%',toggleActions:'play none none reverse'}});
-});
+gsap.to('#pgTitle',{opacity:1,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:'#playground',start:'top 70%',toggleActions:'play none none reverse'}});
+gsap.to('#pgSub',{opacity:1,duration:0.8,delay:0.15,ease:'power3.out',scrollTrigger:{trigger:'#playground',start:'top 70%',toggleActions:'play none none reverse'}});
+gsap.utils.toArray('.pg-card').forEach((c,i)=>{gsap.to(c,{opacity:1,y:0,duration:0.7,delay:i*0.12,ease:'power3.out',scrollTrigger:{trigger:c,start:'top 85%',toggleActions:'play none none reverse'}});});
 </script>
 </body>
 </html>

@@ -98,6 +98,9 @@
             left: 50%; transform: translateX(-50%); white-space: nowrap;
             opacity: 0; clip-path: inset(0 100% 0 0);
         }
+        @media (max-width: 768px) {
+            .sub-label { font-size: 0.75rem; letter-spacing: 0.2em; }
+        }
 
         /* Accent line above sub-label */
         .stage-line {
@@ -116,13 +119,13 @@
         }
         .sirf-sub {
             font-family: 'Syne', sans-serif;
-            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.2em;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.18em;
             color: var(--cream); font-weight: 500; margin-top: 2rem;
             opacity: 0; clip-path: inset(0 100% 0 0);
             white-space: nowrap;
         }
-        @media (max-width: 500px) {
-            .sirf-sub { font-size: 0.7rem; letter-spacing: 0.12em; }
+        @media (max-width: 768px) {
+            .sirf-sub { font-size: 0.72rem; letter-spacing: 0.1em; }
         }
 
         /* ===== SCROLL CUE ===== */

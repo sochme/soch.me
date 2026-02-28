@@ -577,14 +577,16 @@ tl.to('#sEng',{opacity:0,scale:0.95,duration:5,ease:'power2.in'})
     gsap.to(pC,{r:171,g:255,b:132,duration:2});
     pC.calm=false;pC.speed=0.8;
 })
-.fromTo('#sirfText',{opacity:0,scale:0.6,y:40},{
-    opacity:1,scale:1,y:0,duration:8,ease:'power3.out',
+// Sirf comes from far, very slow — like it's emerging from the void
+.fromTo('#sirfText',{opacity:0,scale:0.4,y:60,filter:'blur(8px)'},{
+    opacity:1,scale:1,y:0,filter:'blur(0px)',duration:14,ease:'power2.out',
 })
-.to('#textGlow',{background:'rgba(171,255,132,0.12)',width:750,height:380,opacity:1,duration:7},'<')
-.fromTo('#sirfSub',{opacity:0,y:15},{opacity:0.5,y:0,duration:5,ease:'power2.out'},'-=3');
+.to('#textGlow',{background:'rgba(171,255,132,0.12)',width:750,height:380,opacity:1,duration:10},'<2')
+// Subtitle appears late, after the main text has settled
+.fromTo('#sirfSub',{opacity:0,y:20},{opacity:0.5,y:0,duration:6,ease:'power2.out'},'-=4');
 
-// ---- Sirf Ek Soch holds — let the statement land ----
-tl.to({},{duration:8});
+// ---- Sirf Ek Soch holds — let the statement really land ----
+tl.to({},{duration:12});
 
 // ---- Disintegration ----
 tl.call(()=>{spawnD();})

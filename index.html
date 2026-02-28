@@ -50,34 +50,17 @@
             position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
         }
 
-        .blob {
-            position: absolute; border-radius: 50%;
-            filter: blur(80px); z-index: 1; pointer-events: none;
-        }
-        .blob-1 {
-            width: 450px; height: 450px;
-            background: radial-gradient(circle, rgba(255,252,225,0.1) 0%, transparent 70%);
-            top: 40%; left: 45%; transform: translate(-50%,-50%);
-        }
-        .blob-2 {
-            width: 350px; height: 350px;
-            background: radial-gradient(circle, rgba(157,149,255,0.15) 0%, transparent 70%);
-            top: 30%; left: 30%; opacity: 0;
-        }
-        .blob-3 {
-            width: 380px; height: 380px;
-            background: radial-gradient(circle, rgba(255,135,9,0.14) 0%, transparent 70%);
-            top: 35%; right: 25%; opacity: 0;
-        }
-        .blob-4 {
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(171,255,132,0.12) 0%, transparent 70%);
-            top: 50%; right: 30%; opacity: 0;
-        }
-        .blob-5 {
-            width: 350px; height: 350px;
-            background: radial-gradient(circle, rgba(255,68,68,0.14) 0%, transparent 70%);
-            top: 40%; left: 50%; transform: translateX(-50%); opacity: 0;
+        /* Text glow - sits behind the text, changes color per stage */
+        .text-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px; height: 300px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 1; pointer-events: none;
+            background: rgba(255,252,225,0.06);
+            opacity: 0.8;
         }
 
         .vignette {
@@ -246,11 +229,7 @@
     <div class="intro-pin" id="introPin">
         <canvas id="particleCanvas"></canvas>
         <canvas id="disintegrateCanvas"></canvas>
-        <div class="blob blob-1" id="blob1"></div>
-        <div class="blob blob-2" id="blob2"></div>
-        <div class="blob blob-3" id="blob3"></div>
-        <div class="blob blob-4" id="blob4"></div>
-        <div class="blob blob-5" id="blob5"></div>
+        <div class="text-glow" id="textGlow"></div>
         <div class="vignette"></div>
 
         <div class="text-layer">
@@ -441,9 +420,8 @@ dLoop();
 
 // ===== AMBIENT =====
 gsap.set('#s0',{opacity:1});
-gsap.to('#blob1',{x:30,y:-25,duration:7,ease:'sine.inOut',yoyo:true,repeat:-1});
-gsap.to('#blob2',{x:-20,y:30,duration:9,ease:'sine.inOut',yoyo:true,repeat:-1});
-gsap.to('#blob3',{x:25,y:-15,duration:11,ease:'sine.inOut',yoyo:true,repeat:-1});
+// Gentle pulse on the text glow
+gsap.to('#textGlow',{scale:1.1,opacity:0.9,duration:4,ease:'sine.inOut',yoyo:true,repeat:-1});
 gsap.to('#hindiText',{scale:1.03,duration:3,ease:'sine.inOut',yoyo:true,repeat:-1});
 
 // ===== MASTER TIMELINE =====
@@ -462,7 +440,7 @@ tl.to('#hindiText',{scale:1.15,opacity:0,duration:4,ease:'power2.in'})
 .set('#s0',{opacity:0})
 .set('#sEng',{opacity:1})
 .fromTo('#sochWord',{scale:0.85,opacity:0},{scale:1,opacity:1,duration:5,ease:'power3.out'})
-.to('#blob1',{opacity:0.7,duration:3},'<');
+.to('#textGlow',{background:'rgba(255,252,225,0.08)',width:550,height:320,duration:3},'<');
 
 // ---- Soch holds (22-31%) ----
 tl.to({},{duration:9});
@@ -475,8 +453,7 @@ tl.call(()=>{gsap.to(pC,{r:157,g:149,b:255,duration:2});})
     opacity:1, scale:1,
     duration:8, ease:'power2.out',
 })
-.to('#blob2',{opacity:1,scale:1.4,duration:5},'<')
-.to('#blob1',{opacity:0.1,duration:3},'<')
+.to('#textGlow',{background:'rgba(157,149,255,0.12)',width:650,height:380,duration:5},'<')
 .to('#subQ',{opacity:0.4,duration:3},'-=3');
 
 // ---- Soch? holds (43-50%) ----
@@ -485,7 +462,6 @@ tl.to({},{duration:7});
 // ---- ? → ! (50-62%) ----
 tl.to('#pQ',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
 .to('#subQ',{opacity:0,duration:1},'<')
-.to('#blob2',{opacity:0,duration:2},'<')
 .call(()=>{
     gsap.to(pC,{r:255,g:135,b:9,duration:1});
     pC.burst=true;setTimeout(()=>{pC.burst=false;},600);
@@ -493,8 +469,8 @@ tl.to('#pQ',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
 .fromTo('#pE',{scale:3,opacity:0,y:-20},{
     scale:1,opacity:1,y:0,duration:5,ease:'back.out(2)',
 })
-.to('#blob3',{opacity:1,scale:1.6,duration:3,ease:'power2.out'},'<')
-.to('#blob3',{opacity:0.5,scale:1.2,duration:4})
+.to('#textGlow',{background:'rgba(255,135,9,0.14)',width:700,height:400,duration:3},'<')
+.to('#textGlow',{width:600,height:350,duration:4})
 .to('#subE',{opacity:0.4,duration:3},'-=3');
 
 // ---- Soch! holds (62-69%) ----
@@ -503,7 +479,6 @@ tl.to({},{duration:7});
 // ---- ! → . (69-80%) ----
 tl.to('#pE',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
 .to('#subE',{opacity:0,duration:1},'<')
-.to('#blob3',{opacity:0,duration:2},'<')
 .call(()=>{
     gsap.to(pC,{r:255,g:68,b:68,duration:2});
     pC.calm=true;pC.speed=0.3;
@@ -511,7 +486,7 @@ tl.to('#pE',{opacity:0,scale:0.5,duration:2,ease:'power2.in'})
 .fromTo('#pP',{y:-80,opacity:0},{
     y:0,opacity:1,duration:3,ease:'bounce.out',
 })
-.to('#blob5',{opacity:1,scale:1.3,duration:3,ease:'power2.out'},'<')
+.to('#textGlow',{background:'rgba(255,68,68,0.10)',width:500,height:300,duration:3},'<')
 .to('#subP',{opacity:0.4,duration:3},'-=2');
 
 // ---- Soch. holds (80-86%) ----
@@ -519,7 +494,7 @@ tl.to({},{duration:6});
 
 // ---- Soch. → Sirf Ek Soch (86-94%) ----
 tl.to('#sEng',{opacity:0,scale:0.95,duration:3,ease:'power2.in'})
-.to('#blob5',{opacity:0,duration:2},'<')
+.to('#textGlow',{opacity:0.3,duration:2},'<')
 .set('#sEng',{opacity:0})
 .set('#sSirf',{opacity:1})
 .call(()=>{
@@ -529,11 +504,7 @@ tl.to('#sEng',{opacity:0,scale:0.95,duration:3,ease:'power2.in'})
 .fromTo('#sirfText',{opacity:0,scale:0.6,y:40},{
     opacity:1,scale:1,y:0,duration:5,ease:'power3.out',
 })
-.to('#blob4',{opacity:0.8,scale:2,duration:5,ease:'power2.out'},'<')
-.to('#blob1',{
-    background:'radial-gradient(circle, rgba(171,255,132,0.1) 0%, transparent 70%)',
-    opacity:0.6,duration:4,
-},'<')
+.to('#textGlow',{background:'rgba(171,255,132,0.12)',width:700,height:350,opacity:1,duration:5},'<')
 .fromTo('#sirfSub',{opacity:0,y:15},{opacity:0.5,y:0,duration:4,ease:'power2.out'},'-=3');
 
 // ---- Hold (94-96%) ----
@@ -543,7 +514,7 @@ tl.to({},{duration:2.5});
 tl.call(()=>{spawnD();})
 .to('#sirfText',{opacity:0,scale:1.05,filter:'blur(3px)',duration:2.5,ease:'power2.in'})
 .to('#sirfSub',{opacity:0,duration:1.5},'<')
-.to(['#blob1','#blob4','#blob5'],{opacity:0,duration:2},'<');
+.to('#textGlow',{opacity:0,duration:2},'<');
 
 tl.to('#scrollCue',{opacity:0,duration:2},0.5);
 

@@ -280,6 +280,10 @@
 <body>
 <div class="grain"></div>
 
+<!-- Loading screen -->
+<div id="loader" style="position:fixed;inset:0;z-index:9999;background:#0e100f;display:flex;align-items:center;justify-content:center;">
+</div>
+
 <div id="smooth-wrapper">
 <div id="smooth-content">
 
@@ -388,56 +392,67 @@ if (typeof CustomEase !== 'undefined') {
     CustomEase.create('smooth', '0.45,0.05,0.55,0.95');
 }
 
-// ===== ENTRANCE ANIMATION (auto-plays on load) =====
-document.body.style.overflow = 'hidden';
+// ===== ENTRANCE ANIMATION (auto-plays after full page load) =====
+window.addEventListener('load', () => {
+    document.body.style.overflow = 'hidden';
+    const loader = document.getElementById('loader');
 
-// Split Hindi text into characters for letter-level animation
-const hindiSplit = (typeof SplitText !== 'undefined') 
-    ? new SplitText('#hindiText', {type:'chars'}) 
-    : null;
+    // Split Hindi text into characters for letter-level animation
+    const hindiSplit = (typeof SplitText !== 'undefined') 
+        ? new SplitText('#hindiText', {type:'chars'}) 
+        : null;
 
-const entrance = gsap.timeline({
-    delay: 0.3,
-    onComplete: () => {
-        document.body.style.overflow = '';
-        gsap.to('.scroll-cue', {opacity:1, y:0, duration:1, ease:'power2.out'});
+    // Hide chars initially
+    if (hindiSplit && hindiSplit.chars.length) {
+        gsap.set(hindiSplit.chars, {opacity:0, y:80, filter:'blur(8px)'});
+    } else {
+        gsap.set('#hindiText', {opacity:0, y:60, filter:'blur(12px)'});
     }
+
+    const entrance = gsap.timeline({
+        delay: 0.2,
+        onComplete: () => {
+            document.body.style.overflow = '';
+            gsap.to('.scroll-cue', {opacity:1, y:0, duration:1, ease:'power2.out'});
+        }
+    });
+
+    // 0. Kill the loader
+    entrance.to(loader, {opacity:0, duration:0.5, ease:'power2.inOut', onComplete:()=>{loader.style.display='none';}})
+
+    // 1. Scene awakens
+    .to('#introPin', {opacity:1, duration:1.2, ease:'power2.inOut'})
+
+    // 2. Particles emerge
+    .to('#particleCanvas', {opacity:1, duration:2, ease:'power3.out'}, '-=0.5')
+
+    // 3. Glow breathes to life
+    .fromTo('#textGlow', 
+        {opacity:0, scale:0.3}, 
+        {opacity:1, scale:1, duration:1.5, ease:'power3.out'}, 
+        '-=1.5'
+    )
+
+    // 4. सोच chars drop in with stagger
+    if (hindiSplit && hindiSplit.chars.length) {
+        entrance.to(hindiSplit.chars, {
+            opacity:1, y:0, filter:'blur(0px)',
+            duration:1, stagger:0.2, ease:'back.out(1.4)',
+        }, '-=0.8');
+    } else {
+        entrance.to('#hindiText', {
+            opacity:1, y:0, filter:'blur(0px)', 
+            duration:1.2, ease:'power3.out'
+        }, '-=0.8');
+    }
+
+    // 5. Grain texture
+    entrance.fromTo('.grain', {opacity:0}, {opacity:0.035, duration:0.8}, '-=0.5');
+
+    // Store hindiSplit globally for the scroll transition
+    window._hindiSplit = hindiSplit;
 });
 
-// 1. Scene awakens — dark canvas fades in
-entrance.to('#introPin', {opacity:1, duration:1, ease:'power2.inOut'})
-
-// 2. Particles emerge like stars appearing
-.to('#particleCanvas', {opacity:1, duration:2, ease:'power3.out'}, '-=0.5')
-
-// 3. Glow breathes to life behind text position
-.fromTo('#textGlow', 
-    {opacity:0, scale:0.3}, 
-    {opacity:1, scale:1, duration:1.5, ease:'power3.out'}, 
-    '-=1.5'
-)
-
-// 4. सोच — each character drops in separately with stagger
-if (hindiSplit) {
-    // Hide all chars initially
-    gsap.set(hindiSplit.chars, {opacity:0, y:80, rotateX:-90, filter:'blur(8px)'});
-    entrance.to(hindiSplit.chars, {
-        opacity:1, y:0, rotateX:0, filter:'blur(0px)',
-        duration:0.8, stagger:0.15, ease:'back.out(1.4)',
-    }, '-=0.8');
-} else {
-    // Fallback if SplitText didn't load
-    entrance.fromTo('#hindiText', 
-        {opacity:0, y:60, filter:'blur(12px)'}, 
-        {opacity:1, y:0, filter:'blur(0px)', duration:1.2, ease:'power3.out'}, 
-        '-=0.8'
-    );
-}
-
-// 5. Grain texture last
-entrance.fromTo('.grain', {opacity:0}, {opacity:0.035, duration:0.8}, '-=0.5')
-
-// 6. Scroll cue positioned below, slides up
 gsap.set('.scroll-cue', {y:20});
 
 // ===== PUNCT POSITIONING: handled purely by CSS (left:100%, top:0) =====
@@ -655,8 +670,9 @@ if (sochSplit) {
 }
 
 // Hindi chars blur out with stagger
-if (hindiSplit && hindiSplit.chars) {
-    tl.to(hindiSplit.chars, {
+const hs = window._hindiSplit;
+if (hs && hs.chars && hs.chars.length) {
+    tl.to(hs.chars, {
         opacity:0, filter:'blur(15px)', y:-40,
         duration:2, stagger:0.12, ease:'power2.in',
     });

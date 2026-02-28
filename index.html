@@ -220,6 +220,16 @@
         @media (max-width: 500px) {
             .sirf-text { font-size: clamp(1.8rem, 8vw, 3rem); }
         }
+
+        /* Mobile: use dvh for iOS Safari dynamic toolbar */
+        @supports (height: 100dvh) {
+            .intro-pin { height: 100dvh; }
+        }
+
+        /* Reduce glow size on mobile */
+        @media (max-width: 768px) {
+            .text-glow { width: 300px; height: 200px; filter: blur(70px); }
+        }
     </style>
 </head>
 <body>
@@ -344,7 +354,8 @@ class Pt {
         ctx.fill();
     }
 }
-for(let i=0;i<80;i++)pts.push(new Pt());
+const isMobile = window.innerWidth < 768;
+for(let i=0;i<(isMobile?40:80);i++)pts.push(new Pt());
 
 // ===== FLOATING ORBS — larger, softer, slower =====
 let orbs = [];
@@ -391,7 +402,7 @@ class Orb {
         ctx.fill();
     }
 }
-for(let i=0;i<12;i++) orbs.push(new Orb());
+for(let i=0;i<(isMobile?6:12);i++) orbs.push(new Orb());
 
 function drawLines(){
     for(let i=0;i<pts.length;i++){
@@ -411,7 +422,8 @@ function drawLines(){
 function pLoop(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     orbs.forEach(o=>{o.update();o.draw();});
-    pts.forEach(p=>{p.update();p.draw();});drawLines();
+    pts.forEach(p=>{p.update();p.draw();});
+    if(!isMobile) drawLines();
     requestAnimationFrame(pLoop);
 }
 pLoop();
@@ -476,7 +488,7 @@ gsap.to('#hindiText',{scale:1.03,duration:3,ease:'sine.inOut',yoyo:true,repeat:-
 const tl=gsap.timeline({
     scrollTrigger:{
         trigger:'#intro',start:'top top',end:'bottom bottom',
-        pin:'#introPin',scrub:1.2,anticipatePin:1,
+        pin:'#introPin',scrub:isMobile?2:1.2,anticipatePin:1,
     }
 });
 

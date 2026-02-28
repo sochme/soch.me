@@ -114,10 +114,9 @@
          */
 
         .soch-wrapper {
-            display: inline-flex;
-            align-items: baseline;
-            justify-content: center;
+            display: inline-block;
             position: relative;
+            text-align: center;
         }
 
         .soch-base {
@@ -126,24 +125,17 @@
             font-weight: 700; line-height: 1;
             letter-spacing: -0.03em;
             color: var(--cream);
+            display: inline;
         }
 
-        /* Punctuation: positioned to not affect Soch's centering */
-        .punct-slot {
-            position: relative;
-            width: 0;
-            overflow: visible;
-        }
-
+        /* Punctuation: same font, inline, no layout shift since wrapper is centered */
         .punct-mark {
             font-family: 'Syne', sans-serif;
             font-size: clamp(5rem, 14vw, 13rem);
             font-weight: 700; line-height: 1;
-            position: absolute;
-            left: 0;
-            bottom: 0;
+            letter-spacing: -0.03em;
+            display: inline;
             opacity: 0;
-            white-space: nowrap;
         }
 
         .sub-label {
@@ -276,12 +268,7 @@
             <!-- Stage 1-4: Soch with punctuation overlay -->
             <div class="stage" id="sEng">
                 <div class="soch-wrapper">
-                    <span class="soch-base" id="sochWord">Soch</span>
-                    <span class="punct-slot">
-                        <span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span>
-                        <span class="punct-mark" id="pE" style="color:var(--orange)">!</span>
-                        <span class="punct-mark" id="pP" style="color:var(--red)">.</span>
-                    </span>
+                    <span class="soch-base" id="sochWord">Soch</span><span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span><span class="punct-mark" id="pE" style="color:var(--orange)">!</span><span class="punct-mark" id="pP" style="color:var(--red)">.</span>
                 </div>
                 <!-- Subtexts -->
                 <div class="sub-label" id="subQ" style="color:var(--lilac)">the question</div>
@@ -332,21 +319,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 gsap.registerPlugin(ScrollTrigger);
-
-// ===== FIX PUNCT POSITION =====
-// Dynamically position punct marks at baseline of sochWord
-function alignPunct() {
-    const word = document.getElementById('sochWord');
-    const rect = word.getBoundingClientRect();
-    // punct-mark is absolute inside punct-slot which is after sochWord
-    // We need to set bottom correctly based on font metrics
-    document.querySelectorAll('.punct-mark').forEach(p => {
-        p.style.bottom = '0';
-        p.style.left = '0.05em'; // tiny gap
-    });
-}
-alignPunct();
-window.addEventListener('resize', alignPunct);
 
 // ===== PARTICLES =====
 const canvas = document.getElementById('particleCanvas');

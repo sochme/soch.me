@@ -253,7 +253,10 @@
             text-align: center; padding: 5rem 2rem; font-size: 0.85rem;
             color: var(--surface25); position: relative; z-index: 5;
         }
-        @media (max-width: 768px) { .pg-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .pg-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .playground { padding: 3rem 1.25rem 4rem; }
+        }
         @media (max-width: 500px) {
             .sirf-text { font-size: clamp(1.8rem, 8vw, 3rem); }
         }

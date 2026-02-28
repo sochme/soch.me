@@ -27,7 +27,7 @@
 
         .grain {
             position: fixed; inset: 0; z-index: 1000;
-            pointer-events: none; opacity: 0.035;
+            pointer-events: none; opacity: 0;
             background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             animation: grain 0.4s steps(1) infinite;
         }
@@ -90,6 +90,11 @@
 
         .hindi-font { font-family: 'Noto Sans Devanagari', sans-serif; }
         .eng-font { font-family: 'Syne', sans-serif; }
+
+        /* Entrance: everything starts hidden */
+        .intro-pin { opacity: 0; }
+        #particleCanvas { opacity: 0; }
+        .scroll-cue { opacity: 0; }
 
         /*
          * BULLETPROOF FIX: soch-base is position:relative so it becomes
@@ -375,6 +380,37 @@ if (typeof ScrollSmoother !== 'undefined') {
         effects: true,
     });
 }
+
+// ===== ENTRANCE ANIMATION =====
+// Lock scroll during entrance
+document.body.style.overflow = 'hidden';
+
+const entrance = gsap.timeline({
+    onComplete: () => {
+        document.body.style.overflow = '';
+        // Start scroll cue after entrance
+        gsap.to('.scroll-cue', {opacity:1, duration:1, delay:0.5});
+    }
+});
+
+// 1. Fade in the dark scene with vignette
+entrance.to('#introPin', {opacity:1, duration:0.8, ease:'power2.out'})
+
+// 2. Particles fade in from nothing
+.to('#particleCanvas', {opacity:1, duration:1.5, ease:'power2.out'}, '-=0.3')
+
+// 3. Text glow pulses alive
+.fromTo('#textGlow', {opacity:0, scale:0.5}, {opacity:1, scale:1, duration:1.2, ease:'power3.out'}, '-=1')
+
+// 4. सोच enters — scales up from small with a slight blur
+.fromTo('#hindiText', 
+    {opacity:0, scale:0.3, filter:'blur(12px)'}, 
+    {opacity:1, scale:1, filter:'blur(0px)', duration:1.4, ease:'power3.out'}, 
+    '-=0.6'
+)
+
+// 5. Grain fades in last (subtle)
+.fromTo('.grain', {opacity:0}, {opacity:0.035, duration:0.5}, '-=0.8');
 
 // ===== PUNCT POSITIONING: handled purely by CSS (left:100%, top:0) =====
 // No JS needed — punct marks are children of soch-base with position:relative

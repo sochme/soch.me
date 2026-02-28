@@ -116,9 +116,13 @@
         }
         .sirf-sub {
             font-family: 'Syne', sans-serif;
-            font-size: 1rem; text-transform: uppercase; letter-spacing: 0.3em;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.2em;
             color: var(--cream); font-weight: 500; margin-top: 2rem;
             opacity: 0; clip-path: inset(0 100% 0 0);
+            white-space: nowrap;
+        }
+        @media (max-width: 500px) {
+            .sirf-sub { font-size: 0.7rem; letter-spacing: 0.12em; }
         }
 
         /* ===== SCROLL CUE ===== */
@@ -223,7 +227,7 @@
                 <div class="sub-label" id="subE" style="color:var(--orange)">the spark</div>
                 <div class="sub-label" id="subP" style="color:var(--red)">the conviction</div>
             </div>
-            <div class="stage" id="sSirf" style="text-align:center;">
+            <div class="stage" id="sSirf" style="text-align:center;white-space:normal;">
                 <div class="sirf-text" id="sirfText">Sirf Ek Soch</div>
                 <div class="sirf-sub" id="sirfSub">just one thought is all it takes</div>
             </div>

@@ -38,7 +38,7 @@
         .bg-color { position:fixed;inset:0;z-index:0;background:var(--bg); }
 
         .intro { height: 1200vh; position: relative; }
-        @media(max-width:768px){ .intro{height:600vh;} }
+        @media(max-width:768px){ .intro{height:800vh;} }
         .intro-pin {
             height:100vh;width:100%;display:flex;align-items:center;justify-content:center;
             overflow:hidden;position:relative;opacity:0;
@@ -72,19 +72,14 @@
         /* ===== GRADIENT TEXT ===== */
         .soch-base {
             font-family:'Syne',sans-serif;
-            font-size: clamp(5rem, 16vw, 14rem);
+            font-size: clamp(6rem, 18vw, 16rem);
             font-weight: 700; line-height: 0.9; letter-spacing: -0.04em;
             display:inline-block; position:relative;
             color: var(--cream);
         }
-        /* Gradient applied via JS to handle SplitText compatibility */
-        .soch-gradient {
-            background: linear-gradient(135deg, #fffce1 0%, #e8d5b7 50%, #fffce1 100%);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-        }
         .punct-mark {
             font-family:'Syne',sans-serif;
-            font-size: clamp(5rem, 16vw, 14rem);
+            font-size: clamp(6rem, 18vw, 16rem);
             font-weight: 700; line-height: 0.9;
             position:absolute; left:calc(100% + 0.02em); bottom:0; opacity:0;
         }
@@ -415,6 +410,8 @@ tl.call(()=>{spawnD();setBg('#0e100f');})
 tl.to('#scrollCue',{opacity:0,duration:2},0.5);
 
 // ===== PHILOSOPHY =====
+// Reset bg color when entering philosophy
+gsap.to(bgEl,{backgroundColor:'#0e100f',duration:1,scrollTrigger:{trigger:'#philosophy',start:'top 90%',toggleActions:'play none none reverse'}});
 document.querySelectorAll('.phil-line .word').forEach((w,i)=>{gsap.to(w,{y:0,opacity:1,duration:1,delay:i*0.2,ease:'power3.out',scrollTrigger:{trigger:'#philosophy',start:'top 85%',toggleActions:'play none none reverse'}});});
 gsap.to('#philDivider',{scaleX:1,duration:1,delay:0.6,ease:'power2.inOut',scrollTrigger:{trigger:'#philosophy',start:'top 80%',toggleActions:'play none none reverse'}});
 gsap.to('#philSub',{opacity:1,y:0,duration:1.2,delay:1,ease:'power2.out',scrollTrigger:{trigger:'#philosophy',start:'top 75%',toggleActions:'play none none reverse'}});

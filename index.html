@@ -298,7 +298,7 @@
 
             <!-- Stage 1-4: Soch with punctuation -->
             <div class="stage" id="sEng">
-                <span class="soch-base" id="sochWord">Soch<span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span><span class="punct-mark" id="pE" style="color:var(--orange)">!</span><span class="punct-mark" id="pP" style="color:var(--red)">.</span></span>
+                <span class="soch-base" id="sochWord"><span id="sochLetters">Soch</span><span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span><span class="punct-mark" id="pE" style="color:var(--orange)">!</span><span class="punct-mark" id="pP" style="color:var(--red)">.</span></span>
                 <!-- Subtexts -->
                 <div class="sub-label" id="subQ" style="color:var(--lilac)">the question</div>
                 <div class="sub-label" id="subE" style="color:var(--orange)">the spark</div>
@@ -388,36 +388,57 @@ if (typeof CustomEase !== 'undefined') {
     CustomEase.create('smooth', '0.45,0.05,0.55,0.95');
 }
 
-// ===== ENTRANCE ANIMATION =====
-// Lock scroll during entrance
+// ===== ENTRANCE ANIMATION (auto-plays on load) =====
 document.body.style.overflow = 'hidden';
 
+// Split Hindi text into characters for letter-level animation
+const hindiSplit = (typeof SplitText !== 'undefined') 
+    ? new SplitText('#hindiText', {type:'chars'}) 
+    : null;
+
 const entrance = gsap.timeline({
+    delay: 0.3,
     onComplete: () => {
         document.body.style.overflow = '';
-        // Start scroll cue after entrance
-        gsap.to('.scroll-cue', {opacity:1, duration:1, delay:0.5});
+        gsap.to('.scroll-cue', {opacity:1, y:0, duration:1, ease:'power2.out'});
     }
 });
 
-// 1. Fade in the dark scene with vignette
-entrance.to('#introPin', {opacity:1, duration:0.8, ease:'power2.out'})
+// 1. Scene awakens — dark canvas fades in
+entrance.to('#introPin', {opacity:1, duration:1, ease:'power2.inOut'})
 
-// 2. Particles fade in from nothing
-.to('#particleCanvas', {opacity:1, duration:1.5, ease:'power2.out'}, '-=0.3')
+// 2. Particles emerge like stars appearing
+.to('#particleCanvas', {opacity:1, duration:2, ease:'power3.out'}, '-=0.5')
 
-// 3. Text glow pulses alive
-.fromTo('#textGlow', {opacity:0, scale:0.5}, {opacity:1, scale:1, duration:1.2, ease:'power3.out'}, '-=1')
-
-// 4. सोच enters — scales up from small with a slight blur
-.fromTo('#hindiText', 
-    {opacity:0, scale:0.3, filter:'blur(12px)'}, 
-    {opacity:1, scale:1, filter:'blur(0px)', duration:1.4, ease:'power3.out'}, 
-    '-=0.6'
+// 3. Glow breathes to life behind text position
+.fromTo('#textGlow', 
+    {opacity:0, scale:0.3}, 
+    {opacity:1, scale:1, duration:1.5, ease:'power3.out'}, 
+    '-=1.5'
 )
 
-// 5. Grain fades in last (subtle)
-.fromTo('.grain', {opacity:0}, {opacity:0.035, duration:0.5}, '-=0.8');
+// 4. सोच — each character drops in separately with stagger
+if (hindiSplit) {
+    // Hide all chars initially
+    gsap.set(hindiSplit.chars, {opacity:0, y:80, rotateX:-90, filter:'blur(8px)'});
+    entrance.to(hindiSplit.chars, {
+        opacity:1, y:0, rotateX:0, filter:'blur(0px)',
+        duration:0.8, stagger:0.15, ease:'back.out(1.4)',
+    }, '-=0.8');
+} else {
+    // Fallback if SplitText didn't load
+    entrance.fromTo('#hindiText', 
+        {opacity:0, y:60, filter:'blur(12px)'}, 
+        {opacity:1, y:0, filter:'blur(0px)', duration:1.2, ease:'power3.out'}, 
+        '-=0.8'
+    );
+}
+
+// 5. Grain texture last
+entrance.fromTo('.grain', {opacity:0}, {opacity:0.035, duration:0.8}, '-=0.5')
+
+// 6. Scroll cue positioned below, slides up
+gsap.set('.scroll-cue', {y:20});
 
 // ===== PUNCT POSITIONING: handled purely by CSS (left:100%, top:0) =====
 // No JS needed — punct marks are children of soch-base with position:relative
@@ -621,23 +642,45 @@ const tl=gsap.timeline({
 // ---- सोच holds ----
 tl.to({},{duration:5});
 
-// ---- सोच → Soch (blur crossfade) ----
-// Show sEng behind s0 first, at 0 opacity
-tl.set('#sEng',{opacity:1})
-.set('#sochWord',{opacity:0,filter:'blur(12px)'})
-// Hindi blurs out — each character staggers
-.to('#hindiText',{
-    opacity:0, filter:'blur(15px)', scale:1.05,
-    duration:4, ease:'power2.in',
-})
-// English blurs IN simultaneously — crossfade overlap
-.fromTo('#sochWord',
-    {opacity:0, filter:'blur(15px)', scale:0.95},
-    {opacity:1, filter:'blur(0px)', scale:1, duration:5, ease:'power2.out'},
-    '-=3' // overlap — both visible briefly in blur
-)
-.set('#s0',{opacity:0})
-.to('#textGlow',{background:'rgba(255,252,225,0.08)',width:550,height:320,duration:3},'<');
+// ---- सोच → Soch (letter-level blur crossfade) ----
+const sochSplit = (typeof SplitText !== 'undefined')
+    ? new SplitText('#sochLetters', {type:'chars'})
+    : null;
+
+// Prepare: show sEng container but hide the word
+tl.set('#sEng',{opacity:1});
+tl.set('#sochWord',{opacity:1});
+if (sochSplit) {
+    gsap.set(sochSplit.chars, {opacity:0, filter:'blur(10px)', y:40});
+}
+
+// Hindi chars blur out with stagger
+if (hindiSplit && hindiSplit.chars) {
+    tl.to(hindiSplit.chars, {
+        opacity:0, filter:'blur(15px)', y:-40,
+        duration:2, stagger:0.12, ease:'power2.in',
+    });
+} else {
+    tl.to('#hindiText',{opacity:0, filter:'blur(15px)', duration:3, ease:'power2.in'});
+}
+
+tl.set('#s0',{opacity:0});
+
+// English chars blur in with stagger — overlaps with hindi exit
+if (sochSplit) {
+    tl.to(sochSplit.chars, {
+        opacity:1, filter:'blur(0px)', y:0,
+        duration:2, stagger:0.15, ease:'back.out(1.2)',
+    }, '-=1.5');
+} else {
+    tl.fromTo('#sochWord',
+        {opacity:0, filter:'blur(15px)'},
+        {opacity:1, filter:'blur(0px)', duration:4, ease:'power2.out'},
+        '-=2'
+    );
+}
+
+tl.to('#textGlow',{background:'rgba(255,252,225,0.08)',width:550,height:320,duration:3},'<');
 
 // ---- Soch holds ----
 tl.to({},{duration:4});

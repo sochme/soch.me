@@ -346,6 +346,53 @@ class Pt {
 }
 for(let i=0;i<80;i++)pts.push(new Pt());
 
+// ===== FLOATING ORBS — larger, softer, slower =====
+let orbs = [];
+class Orb {
+    constructor(){
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.sz = Math.random() * 25 + 15; // 15-40px radius
+        this.baseX = this.x;
+        this.baseY = this.y;
+        this.driftX = Math.random() * 80 + 40; // how far it drifts
+        this.driftY = Math.random() * 60 + 30;
+        this.spdX = Math.random() * 0.0004 + 0.0002; // very slow
+        this.spdY = Math.random() * 0.0003 + 0.0002;
+        this.phX = Math.random() * Math.PI * 2;
+        this.phY = Math.random() * Math.PI * 2;
+        this.op = Math.random() * 0.04 + 0.02; // very subtle: 0.02-0.06
+        this.pulseSpd = Math.random() * 0.002 + 0.001;
+        this.pulsePh = Math.random() * Math.PI * 2;
+    }
+    update(){
+        this.phX += this.spdX;
+        this.phY += this.spdY;
+        this.pulsePh += this.pulseSpd;
+        this.x = this.baseX + Math.sin(this.phX) * this.driftX;
+        this.y = this.baseY + Math.cos(this.phY) * this.driftY;
+        // wrap
+        if(this.x < -50) this.baseX += canvas.width + 100;
+        if(this.x > canvas.width + 50) this.baseX -= canvas.width + 100;
+        if(this.y < -50) this.baseY += canvas.height + 100;
+        if(this.y > canvas.height + 50) this.baseY -= canvas.height + 100;
+    }
+    draw(){
+        const pulse = Math.sin(this.pulsePh) * 0.3 + 0.7; // 0.4-1.0
+        const curOp = this.op * pulse;
+        const curSz = this.sz * (pulse * 0.3 + 0.85);
+        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, curSz);
+        grad.addColorStop(0, `rgba(${pC.r},${pC.g},${pC.b},${curOp})`);
+        grad.addColorStop(0.4, `rgba(${pC.r},${pC.g},${pC.b},${curOp * 0.5})`);
+        grad.addColorStop(1, `rgba(${pC.r},${pC.g},${pC.b},0)`);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, curSz, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+    }
+}
+for(let i=0;i<12;i++) orbs.push(new Orb());
+
 function drawLines(){
     for(let i=0;i<pts.length;i++){
         for(let j=i+1;j<pts.length;j++){
@@ -363,6 +410,7 @@ function drawLines(){
 }
 function pLoop(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    orbs.forEach(o=>{o.update();o.draw();});
     pts.forEach(p=>{p.update();p.draw();});drawLines();
     requestAnimationFrame(pLoop);
 }

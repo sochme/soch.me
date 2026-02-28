@@ -200,8 +200,11 @@
         }
         .pg-card {
             background: #1a1c1b; border: 1px solid #2a2c2b; border-radius: 16px;
-            padding: 2.5rem; opacity: 0; transform: translateY(40px);
+            overflow: hidden; opacity: 0; transform: translateY(40px);
             transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
+        }
+        .pg-card-body {
+            padding: 1.5rem 2rem 2rem;
         }
         .pg-card.clickable {
             cursor: pointer;
@@ -222,9 +225,8 @@
             background: rgba(124,124,111,0.08);
         }
         .pg-preview {
-            display: flex; gap: 6px; margin-bottom: 1.5rem;
-            border-radius: 10px; overflow: hidden;
-            height: 120px;
+            display: flex; gap: 3px;
+            height: 160px;
         }
         .pg-preview img {
             flex: 1; object-fit: cover; min-width: 0;
@@ -329,17 +331,21 @@
                 <img src="img/art2.png" alt="Be Curious illustration">
                 <img src="img/art3.png" alt="Samurai sheep art">
             </div>
-            <div class="pg-card-title">Digital Art from Midjourney</div>
-            <div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment. Every prompt, a new world.</div>
-            <div class="pg-card-arrow">View Gallery <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+            <div class="pg-card-body">
+                <div class="pg-card-title">Digital Art from Midjourney</div>
+                <div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment. Every prompt, a new world.</div>
+                <div class="pg-card-arrow">View Gallery <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+            </div>
         </div>
         <div class="pg-card coming-soon">
-            <div class="pg-card-icon" style="background:rgba(124,124,111,0.1);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c7c6f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <div class="pg-card-body">
+                <div class="pg-card-icon" style="background:rgba(124,124,111,0.1);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c7c6f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div class="pg-card-title">What's Next?</div>
+                <div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div>
+                <span class="pg-card-tag">Coming Soon</span>
             </div>
-            <div class="pg-card-title">What's Next?</div>
-            <div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div>
-            <span class="pg-card-tag">Coming Soon</span>
         </div>
     </div>
 </section>

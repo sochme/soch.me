@@ -337,8 +337,8 @@ class Pt {
             this.x+=(dx/d)*3;this.y+=(dy/d)*3;
             this.sz=this.bSz*1.8;
         } else if(pC.calm){
-            this.x+=this.vx*0.15;this.y+=this.vy*0.15;
-            this.op=this.bOp*0.4;
+            this.x+=this.vx*0.2;this.y+=this.vy*0.2;
+            this.op=this.bOp*0.7;
         } else {
             this.x+=this.vx*pC.speed;this.y+=this.vy*pC.speed;
         }
@@ -562,7 +562,7 @@ tl.call(()=>{
 .fromTo('#pP',{y:-60,opacity:0},{
     y:0,opacity:1,duration:5,ease:'bounce.out',
 })
-.to('#textGlow',{background:'rgba(255,68,68,0.11)',width:600,height:350,duration:5},'<')
+.to('#textGlow',{background:'rgba(255,68,68,0.16)',width:650,height:380,duration:5},'<')
 .to('#subP',{opacity:0.4,duration:4},'-=3');
 
 // ---- Soch. holds — let conviction sink in ----

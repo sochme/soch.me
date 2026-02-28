@@ -101,24 +101,11 @@
         .eng-font { font-family: 'Syne', sans-serif; }
 
         /*
-         * CRITICAL FIX: Soch + punctuation centering
-         * We use a flex container. "Soch" is always there.
-         * Punctuation sits next to it but has width that transitions.
-         * When hidden, it collapses. When shown, it expands.
-         * This way "Soch" stays centered when alone, and
-         * "Soch?" shifts slightly left — but that's natural and expected.
-         *
-         * ALTERNATIVELY: We can keep Soch always in the same spot
-         * by using a trick: the punctuation is overlaid AFTER Soch
-         * using a CSS approach where it doesn't affect layout.
+         * BULLETPROOF FIX: Soch is just centered text.
+         * Punctuation marks are separate absolutely-positioned elements
+         * whose left position is calculated by JS based on Soch's right edge.
+         * This way Soch NEVER moves, and punct always sits right next to it.
          */
-
-        .soch-wrapper {
-            display: inline-flex;
-            align-items: baseline;
-            justify-content: center;
-            position: relative;
-        }
 
         .soch-base {
             font-family: 'Syne', sans-serif;
@@ -126,13 +113,7 @@
             font-weight: 700; line-height: 1;
             letter-spacing: -0.03em;
             color: var(--cream);
-        }
-
-        /* Punctuation: positioned to not affect Soch's centering */
-        .punct-slot {
-            position: relative;
-            width: 0;
-            overflow: visible;
+            display: inline-block;
         }
 
         .punct-mark {
@@ -140,10 +121,8 @@
             font-size: clamp(5rem, 14vw, 13rem);
             font-weight: 700; line-height: 1;
             position: absolute;
-            left: 0;
-            bottom: 0;
             opacity: 0;
-            white-space: nowrap;
+            /* left and top set by JS */
         }
 
         .sub-label {
@@ -273,16 +252,12 @@
                 <div class="hero-font hindi-font" id="hindiText">सोच</div>
             </div>
 
-            <!-- Stage 1-4: Soch with punctuation overlay -->
+            <!-- Stage 1-4: Soch with punctuation -->
             <div class="stage" id="sEng">
-                <div class="soch-wrapper">
-                    <span class="soch-base" id="sochWord">Soch</span>
-                    <span class="punct-slot">
-                        <span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span>
-                        <span class="punct-mark" id="pE" style="color:var(--orange)">!</span>
-                        <span class="punct-mark" id="pP" style="color:var(--red)">.</span>
-                    </span>
-                </div>
+                <span class="soch-base" id="sochWord">Soch</span>
+                <span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span>
+                <span class="punct-mark" id="pE" style="color:var(--orange)">!</span>
+                <span class="punct-mark" id="pP" style="color:var(--red)">.</span>
                 <!-- Subtexts -->
                 <div class="sub-label" id="subQ" style="color:var(--lilac)">the question</div>
                 <div class="sub-label" id="subE" style="color:var(--orange)">the spark</div>
@@ -333,20 +308,29 @@
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-// ===== FIX PUNCT POSITION =====
-// Dynamically position punct marks at baseline of sochWord
-function alignPunct() {
-    const word = document.getElementById('sochWord');
-    const rect = word.getBoundingClientRect();
-    // punct-mark is absolute inside punct-slot which is after sochWord
-    // We need to set bottom correctly based on font metrics
+// ===== POSITION PUNCTUATION next to Soch =====
+function positionPunct() {
+    const soch = document.getElementById('sochWord');
+    const stage = document.getElementById('sEng');
+    if (!soch || !stage) return;
+    
+    // Get Soch's position relative to its parent stage
+    const sochRect = soch.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
+    
+    // Punct should sit right after Soch's right edge, same baseline
+    const rightEdge = sochRect.right - stageRect.left;
+    const top = sochRect.top - stageRect.top;
+    
     document.querySelectorAll('.punct-mark').forEach(p => {
-        p.style.bottom = '0';
-        p.style.left = '0.05em'; // tiny gap
+        p.style.left = (rightEdge + 2) + 'px'; // 2px gap
+        p.style.top = top + 'px';
     });
 }
-alignPunct();
-window.addEventListener('resize', alignPunct);
+positionPunct();
+window.addEventListener('resize', positionPunct);
+// Also reposition after fonts load
+document.fonts.ready.then(positionPunct);
 
 // ===== PARTICLES =====
 const canvas = document.getElementById('particleCanvas');

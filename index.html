@@ -65,25 +65,28 @@
         /* ===== MASSIVE TEXT ===== */
         .hero-font {
             font-size: clamp(6rem, 18vw, 16rem);
-            font-weight: 800; line-height: 0.9; letter-spacing: -0.04em;
+            font-weight: 700; line-height: 0.9; letter-spacing: -0.04em;
         }
         .hindi-font { font-family:'Noto Sans Devanagari',sans-serif; }
 
         /* ===== GRADIENT TEXT ===== */
         .soch-base {
             font-family:'Syne',sans-serif;
-            font-size: clamp(6rem, 18vw, 16rem);
-            font-weight: 800; line-height: 0.9; letter-spacing: -0.04em;
+            font-size: clamp(5rem, 16vw, 14rem);
+            font-weight: 700; line-height: 0.9; letter-spacing: -0.04em;
             display:inline-block; position:relative;
+            color: var(--cream);
+        }
+        /* Gradient applied via JS to handle SplitText compatibility */
+        .soch-gradient {
             background: linear-gradient(135deg, #fffce1 0%, #e8d5b7 50%, #fffce1 100%);
             -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
         }
         .punct-mark {
             font-family:'Syne',sans-serif;
-            font-size: clamp(6rem, 18vw, 16rem);
-            font-weight: 800; line-height: 0.9;
+            font-size: clamp(5rem, 16vw, 14rem);
+            font-weight: 700; line-height: 0.9;
             position:absolute; left:calc(100% + 0.02em); bottom:0; opacity:0;
-            -webkit-text-fill-color:currentColor;
         }
 
         /* ===== CLIP-PATH SUB-LABELS ===== */
@@ -103,7 +106,7 @@
         /* ===== SIRF EK SOCH ===== */
         .sirf-text {
             font-family:'Syne',sans-serif;
-            font-size:clamp(2.5rem,7vw,6rem); font-weight:800; letter-spacing:-0.02em;
+            font-size:clamp(2.5rem,7vw,6rem); font-weight:700; letter-spacing:-0.02em;
             white-space:nowrap;
             background:linear-gradient(135deg,var(--green) 0%,#7dffb8 50%,var(--green) 100%);
             -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
@@ -325,13 +328,14 @@ gsap.set('.scroll-cue',{y:20});
 
 // ===== HELPERS =====
 function setGradient(stage){
-    const g={
-        default:'linear-gradient(135deg,#fffce1 0%,#e8d5b7 50%,#fffce1 100%)',
-        question:'linear-gradient(135deg,#fffce1 0%,#c4bfff 40%,#9d95ff 100%)',
-        spark:'linear-gradient(135deg,#fffce1 0%,#ffc877 40%,#ff8709 100%)',
-        conviction:'linear-gradient(135deg,#fffce1 0%,#ff9999 40%,#ff4444 100%)',
+    const colors={
+        default:'#fffce1',
+        question:'#c4bfff',
+        spark:'#ffc877',
+        conviction:'#ff9999',
     };
-    document.getElementById('sochWord').style.backgroundImage=g[stage]||g.default;
+    // Animate the color of the soch text itself
+    gsap.to('#sochWord',{color:colors[stage]||colors.default,duration:1.5,ease:'power2.inOut'});
 }
 function setBg(hex){gsap.to(bgEl,{backgroundColor:hex,duration:2,ease:'power2.inOut'});}
 

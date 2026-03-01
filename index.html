@@ -132,7 +132,7 @@
         }
 
         /* ===== SCENE 3: Soch? — ELECTRIC VIOLET ===== */
-        .scene-question { background: #2d1b69; color: #fffce1; min-height: 150vh; }
+        .scene-question { background: #2d1b69; color: #fffce1; }
         .q-punct {
             font-size: clamp(10rem, 40vw, 38rem); font-weight: 700;
             line-height: 0.75; color: rgba(251,191,36,0.1);
@@ -157,7 +157,7 @@
         }
 
         /* ===== SCENE 4: Soch! — HOT AMBER ===== */
-        .scene-spark { background: #f59e0b; color: #1a1a2e; min-height: 150vh; }
+        .scene-spark { background: #f59e0b; color: #1a1a2e; }
         .spark-punct {
             font-size: clamp(10rem, 40vw, 38rem); font-weight: 700;
             line-height: 0.75; color: rgba(0,0,0,0.06);
@@ -183,7 +183,7 @@
         }
 
         /* ===== SCENE 5: Soch. — DEEP CRIMSON ===== */
-        .scene-conviction { background: #7f1d1d; color: #fffce1; min-height: 150vh; }
+        .scene-conviction { background: #7f1d1d; color: #fffce1; }
         .conv-word {
             font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700;
             letter-spacing: -0.03em; color: #fffce1; opacity: 0;
@@ -293,7 +293,6 @@
         }
 
         @media (max-width: 768px) {
-            .scene-question, .scene-spark, .scene-conviction { min-height: 100vh; }
             .scene-inner { padding: 4rem 1.5rem; }
             .hindi-subtitle { margin-top: 1rem; }
             .hindi-sub-line2 { font-size: 0.95rem; }
@@ -527,59 +526,46 @@ mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
           .fromTo('#sochSep2', { opacity: 0 }, { opacity: 1, duration: 0.2 }, '+=0.15')
           .fromTo('#sochM3', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.05');
 
-    // --- SCENE 3: Soch? — the uncertainty (scrub-driven) ---
+    // --- SCENE 3: Soch? — the uncertainty (hesitant motion) ---
     const qTL = gsap.timeline({
-        scrollTrigger: {
-            trigger: '#sceneQuestion',
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 0.8,
-            pin: '#sceneQuestion .scene-inner',
-        }
+        scrollTrigger: { trigger: '#sceneQuestion', start: 'top 70%', toggleActions: 'play none none reverse' }
     });
-    qTL.fromTo('#qWord', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' })
+    qTL.fromTo('#qWord', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.2, ease: 'hesitant' })
        .fromTo('#qPunct', { opacity: 0, scale: 0.3, rotation: -20 },
-                          { opacity: 1, scale: 1, rotation: 0, duration: 1.5, ease: 'elastic.out(0.8, 0.4)' }, '-=0.5')
-       .fromTo('#qLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, '-=0.5')
-       .to('#qLine', { scaleX: 1, duration: 1, ease: 'power2.inOut' }, '-=0.5')
-       .fromTo('#qShape1', { opacity: 0, y: 30 }, { opacity: 0.7, y: 0, duration: 1, ease: 'power2.out' }, '-=1')
-       // Hold at end for a beat
-       .to({}, { duration: 0.5 });
+                          { opacity: 1, scale: 1, rotation: 0, duration: 1.6, ease: 'elastic.out(0.8, 0.4)' }, '-=0.8')
+       .fromTo('#qLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.8')
+       .to('#qLine', { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, '-=0.4')
+       .fromTo('#qShape1', { opacity: 0, y: 30 }, { opacity: 0.7, y: 0, duration: 1, ease: 'power2.out' }, '-=1');
 
-    // --- SCENE 4: Soch! — the ignition (scrub-driven, explosive) ---
+    // Background ? — slow drift tied to scroll
+    gsap.to('#qPunct', {
+        y: -40, rotation: 5,
+        scrollTrigger: { trigger: '#sceneQuestion', start: 'top bottom', end: 'bottom top', scrub: 2 }
+    });
+
+    // --- SCENE 4: Soch! — the ignition (explosive snap) ---
     const sparkTL = gsap.timeline({
-        scrollTrigger: {
-            trigger: '#sceneSpark',
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 0.8,
-            pin: '#sceneSpark .scene-inner',
-        }
+        scrollTrigger: { trigger: '#sceneSpark', start: 'top 70%', toggleActions: 'play none none reverse' }
     });
-    sparkTL.fromTo('#sparkWord', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' })
+    sparkTL.fromTo('#sparkWord', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'ignite' })
            .fromTo('#sparkPunct', { opacity: 0, scale: 3, x: 80 },
-                                  { opacity: 1, scale: 1, x: 0, duration: 1, ease: 'back.out(2)' }, '-=0.3')
-           .fromTo('#sparkLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.3')
-           .to('#sparkLine', { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, '-=0.3')
+                                  { opacity: 1, scale: 1, x: 0, duration: 0.8, ease: 'back.out(2)' }, '-=0.3')
+           // Flash pulse on background
+           .to('.scene-spark', { backgroundColor: '#fbbf24', duration: 0.1 }, '-=0.6')
+           .to('.scene-spark', { backgroundColor: '#f59e0b', duration: 0.4, ease: 'power2.out' }, '-=0.5')
+           .fromTo('#sparkLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.3')
+           .to('#sparkLine', { scaleX: 1, duration: 0.6, ease: 'power2.inOut' }, '-=0.2')
            .fromTo('#sparkShape1', { opacity: 0, rotation: -20, scale: 0.5 },
-                                   { opacity: 0.5, rotation: 0, scale: 1, duration: 1, ease: 'power2.out' }, '-=0.8')
-           .to({}, { duration: 0.5 });
+                                   { opacity: 0.5, rotation: 0, scale: 1, duration: 1, ease: 'power2.out' }, '-=0.8');
 
-    // --- SCENE 5: Soch. — the conviction (scrub-driven, slow and inevitable) ---
+    // --- SCENE 5: Soch. — the conviction (slow, inevitable) ---
     const convTL = gsap.timeline({
-        scrollTrigger: {
-            trigger: '#sceneConviction',
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1,
-            pin: '#sceneConviction .scene-inner',
-        }
+        scrollTrigger: { trigger: '#sceneConviction', start: 'top 70%', toggleActions: 'play none none reverse' }
     });
-    convTL.fromTo('#convWord', { opacity: 0 }, { opacity: 1, duration: 2, ease: 'power1.out' })
+    convTL.fromTo('#convWord', { opacity: 0 }, { opacity: 1, duration: 2, ease: 'decisive' })
           .fromTo('#convLabel', { opacity: 0 }, { opacity: 1, duration: 1.5, ease: 'power1.out' }, '-=1')
           .to('#convLine', { scaleX: 1, duration: 1.5, ease: 'power1.inOut' }, '-=0.8')
-          .fromTo('#convShape1', { opacity: 0 }, { opacity: 0.3, duration: 1.5 }, '-=1.5')
-          .to({}, { duration: 0.8 });
+          .fromTo('#convShape1', { opacity: 0 }, { opacity: 0.3, duration: 1.5 }, '-=1.5');
 
     // --- SCENE 6: Sirf Ek Soch — the arrival (words meeting) ---
     const sirfTL = gsap.timeline({

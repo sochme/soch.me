@@ -6,617 +6,475 @@
     <title>soch.me</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg: #0e100f;
-            --cream: #fffce1;
-            --lilac: #9d95ff;
-            --orange: #ff8709;
-            --green: #abff84;
-            --red: #ff4444;
-            --grey: #7c7c6f;
-            --surface25: #42433d;
-        }
-        html { background: var(--bg); }
-        body { background: var(--bg); color: var(--cream); overflow-x: hidden; font-family: 'Syne', sans-serif; }
+        html { scroll-behavior: auto; }
+        body { overflow-x: hidden; font-family: 'Inter', sans-serif; background: #0f0a1e; }
 
-        #loader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); }
+        /* ===== TYPOGRAPHY SYSTEM ===== */
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .font-serif { font-family: 'DM Serif Display', serif; }
+        .font-hindi { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
 
+        /* ===== LOADER ===== */
+        #loader { position: fixed; inset: 0; z-index: 9999; background: #0f0a1e; display: flex; align-items: center; justify-content: center; }
+
+        /* ===== GRAIN OVERLAY ===== */
         .grain {
             position: fixed; inset: 0; z-index: 1000; pointer-events: none; opacity: 0;
             background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            animation: grain 0.4s steps(1) infinite;
+            animation: grainMove 0.4s steps(1) infinite;
         }
-        @keyframes grain {
-            0% { transform: translate(0,0) } 25% { transform: translate(-3%,-3%) }
-            50% { transform: translate(3%,1%) } 75% { transform: translate(-1%,3%) }
+        @keyframes grainMove { 0%{transform:translate(0,0)} 25%{transform:translate(-2%,-2%)} 50%{transform:translate(2%,1%)} 75%{transform:translate(-1%,2%)} }
+
+        /* ===== SECTION BASE ===== */
+        .scene {
+            position: relative; width: 100%; min-height: 100vh;
+            display: flex; align-items: center; overflow: hidden;
         }
-
-        /* BG color layer for subtle ambient shifts */
-        .bg-color { position: fixed; inset: 0; z-index: 0; background: var(--bg); }
-
-        /* ===== INTRO SECTION ===== */
-        .intro { height: 1200vh; position: relative; }
-        .intro-pin {
-            height: 100vh; width: 100%; display: flex; align-items: center;
-            justify-content: center; overflow: hidden; position: relative; opacity: 0;
-        }
-        @supports (height: 100dvh) { .intro-pin { height: 100dvh; } }
-
-        /* Canvas — desktop only, hidden on mobile via JS */
-        #particleCanvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; }
-        #disintegrateCanvas { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; }
-
-        .text-glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 500px; height: 300px; border-radius: 50%; filter: blur(100px);
-            z-index: 1; pointer-events: none; background: rgba(255,252,225,0.06); opacity: 0;
-        }
-        .vignette {
-            position: absolute; inset: 0; z-index: 2; pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 40%, rgba(14,16,15,0.7) 100%);
-        }
-        .text-layer { position: relative; z-index: 3; text-align: center; }
-
-        .stage {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            opacity: 0; white-space: nowrap;
+        .scene-inner {
+            width: 100%; max-width: 1400px; margin: 0 auto;
+            padding: 6rem 4rem; position: relative; z-index: 2;
         }
 
-        /* ===== HERO TEXT ===== */
-        .hero-font {
-            font-size: clamp(5rem, 16vw, 14rem);
-            font-weight: 700; line-height: 0.9; letter-spacing: -0.04em;
+        /* ===== GEOMETRIC SHAPES ===== */
+        .shape {
+            position: absolute; border-radius: 50%; pointer-events: none; z-index: 1;
         }
-        .hindi-font { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .shape-rect { border-radius: 0; }
+        .shape-rounded { border-radius: 24px; }
 
-        /* Soch — always cream, the anchor */
-        .soch-base {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(5rem, 16vw, 14rem);
-            font-weight: 700; line-height: 0.9; letter-spacing: -0.04em;
-            display: inline-block; position: relative;
-            color: var(--cream);
+        /* ===== SCENE 1: सोच — DEEP INDIGO ===== */
+        .scene-hindi {
+            background: #0f0a1e; min-height: 100vh;
+            display: flex; align-items: center; justify-content: flex-start;
         }
-
-        /* Punctuation — the dramatic actors */
-        .punct-mark {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(5rem, 16vw, 14rem);
-            font-weight: 700; line-height: 0.9;
-            position: absolute; left: calc(100% + 0.02em); bottom: 0;
+        .hindi-hero {
+            font-size: clamp(6rem, 20vw, 18rem); font-weight: 700;
+            line-height: 0.85; color: #ece7ff;
             opacity: 0;
         }
-
-        /* Sub-labels with clip-path reveal */
-        .sub-label {
-            font-family: 'Syne', sans-serif;
-            font-size: 1rem; text-transform: uppercase; letter-spacing: 0.3em; font-weight: 600;
-            position: absolute; top: calc(50% + clamp(3.5rem, 9vw, 8rem));
-            left: 50%; transform: translateX(-50%); white-space: nowrap;
-            opacity: 0; clip-path: inset(0 100% 0 0);
+        .hindi-shape-1 {
+            width: clamp(120px, 25vw, 300px); height: clamp(120px, 25vw, 300px);
+            background: radial-gradient(circle, #ff6b6b 0%, #ee5a24 100%);
+            top: 15%; right: 12%; opacity: 0.7; filter: blur(1px);
         }
-        @media (max-width: 768px) {
-            .sub-label { font-size: 0.75rem; letter-spacing: 0.2em; }
+        .hindi-shape-2 {
+            width: clamp(60px, 10vw, 140px); height: clamp(60px, 10vw, 140px);
+            background: #ffd93d; top: 65%; right: 30%; opacity: 0.6;
         }
-
-        /* Accent line above sub-label */
-        .stage-line {
-            position: absolute; top: calc(50% + clamp(2rem, 6vw, 5.5rem));
-            left: 50%; transform: translateX(-50%) scaleX(0);
-            width: 60px; height: 1.5px; transform-origin: center;
+        .scroll-hint {
+            position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.4em;
+            color: rgba(236,231,255,0.25); opacity: 0;
         }
 
-        /* ===== SIRF EK SOCH ===== */
-        .sirf-text {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2.5rem, 7vw, 6rem); font-weight: 700; letter-spacing: -0.02em;
-            white-space: nowrap;
-            background: linear-gradient(135deg, var(--green) 0%, #7dffb8 50%, var(--green) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        /* ===== SCENE 2: Soch — WARM CREAM ===== */
+        .scene-soch { background: #f5f0e8; color: #1a1a2e; }
+        .soch-hero {
+            font-size: clamp(5rem, 18vw, 16rem); font-weight: 700;
+            line-height: 0.85; letter-spacing: -0.04em; color: #1a1a2e;
+            opacity: 0;
+        }
+        .soch-meaning {
+            font-size: clamp(1rem, 1.8vw, 1.3rem); font-weight: 300;
+            letter-spacing: 0.15em; text-transform: uppercase; color: #8a8578;
+            margin-top: 2rem; opacity: 0;
+        }
+        .soch-shape-1 {
+            width: clamp(200px, 35vw, 450px); height: clamp(120px, 18vw, 250px);
+            background: #4361ee; top: 10%; right: -5%;
+            opacity: 0.9; border-radius: 0;
+        }
+        .soch-shape-2 {
+            width: clamp(80px, 12vw, 160px); height: clamp(80px, 12vw, 160px);
+            background: #ff6b6b; bottom: 15%; right: 20%;
+            opacity: 0.8;
+        }
+
+        /* ===== SCENE 3: Soch? — ELECTRIC VIOLET ===== */
+        .scene-question { background: #2d1b69; color: #ece7ff; }
+        .q-punct {
+            font-size: clamp(10rem, 40vw, 38rem); font-weight: 700;
+            line-height: 0.75; color: rgba(255,255,255,0.08);
+            position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+            opacity: 0; z-index: 1;
+        }
+        .q-word {
+            font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700;
+            letter-spacing: -0.03em; color: #ece7ff; opacity: 0;
+        }
+        .q-label {
+            font-size: clamp(1.1rem, 2vw, 1.6rem); font-style: italic;
+            color: #c4b5fd; margin-top: 1.5rem; opacity: 0;
+        }
+        .q-line {
+            width: 80px; height: 2px; background: #7c3aed;
+            margin-top: 2rem; transform: scaleX(0); transform-origin: left;
+        }
+        .q-shape-1 {
+            width: clamp(100px, 20vw, 250px); height: clamp(100px, 20vw, 250px);
+            background: #fbbf24; bottom: 10%; left: 60%; opacity: 0.7;
+        }
+
+        /* ===== SCENE 4: Soch! — HOT AMBER ===== */
+        .scene-spark { background: #f59e0b; color: #1a1a2e; }
+        .spark-punct {
+            font-size: clamp(10rem, 40vw, 38rem); font-weight: 700;
+            line-height: 0.75; color: rgba(0,0,0,0.06);
+            position: absolute; left: 5%; top: 50%; transform: translateY(-50%);
+            opacity: 0; z-index: 1;
+        }
+        .spark-content { text-align: right; }
+        .spark-word {
+            font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700;
+            letter-spacing: -0.03em; color: #1a1a2e; opacity: 0;
+        }
+        .spark-label {
+            font-size: clamp(1.1rem, 2vw, 1.6rem); font-style: italic;
+            color: #92400e; margin-top: 1.5rem; opacity: 0;
+        }
+        .spark-line {
+            width: 80px; height: 2px; background: #92400e;
+            margin-top: 2rem; margin-left: auto; transform: scaleX(0); transform-origin: right;
+        }
+        .spark-shape-1 {
+            width: clamp(150px, 28vw, 350px); height: clamp(150px, 28vw, 350px);
+            background: #ef4444; top: 8%; left: 5%; opacity: 0.5; border-radius: 24px;
+        }
+
+        /* ===== SCENE 5: Soch. — DEEP CRIMSON ===== */
+        .scene-conviction { background: #7f1d1d; color: #fecaca; }
+        .conv-word {
+            font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700;
+            letter-spacing: -0.03em; color: #fecaca; opacity: 0;
+        }
+        .conv-period {
+            font-size: clamp(6rem, 20vw, 16rem); font-weight: 700;
+            color: #fca5a5; line-height: 0.5; display: block;
+            margin-top: 1rem; opacity: 0;
+        }
+        .conv-label {
+            font-size: clamp(1.1rem, 2vw, 1.6rem); font-style: italic;
+            color: #fca5a5; margin-top: 3rem; opacity: 0;
+        }
+        .conv-line {
+            width: 120px; height: 2px; background: #dc2626;
+            margin-top: 2rem; transform: scaleX(0); transform-origin: left;
+        }
+        .conv-shape-1 {
+            width: clamp(100px, 18vw, 220px); height: clamp(100px, 18vw, 220px);
+            background: #fbbf24; top: 20%; right: 10%; opacity: 0.3;
+        }
+
+        /* ===== SCENE 6: SIRF EK SOCH — FRESH GREEN ===== */
+        .scene-sirf { background: #065f46; color: #d1fae5; }
+        .sirf-hero {
+            font-size: clamp(3rem, 9vw, 7.5rem); font-weight: 700;
+            letter-spacing: -0.03em; color: #ecfdf5; line-height: 1.05;
+            opacity: 0;
+        }
+        .sirf-hero em {
+            font-style: normal; color: #6ee7b7;
         }
         .sirf-sub {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.18em;
-            color: var(--cream); font-weight: 500; margin-top: 2rem;
-            opacity: 0; clip-path: inset(0 100% 0 0);
-            white-space: nowrap;
+            font-size: clamp(0.95rem, 1.6vw, 1.2rem); font-weight: 300;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: #6ee7b7; margin-top: 2.5rem; opacity: 0;
         }
-        @media (max-width: 768px) {
-            .sirf-sub { font-size: 0.72rem; letter-spacing: 0.1em; }
+        .sirf-shape-1 {
+            width: clamp(200px, 30vw, 400px); height: clamp(200px, 30vw, 400px);
+            background: #10b981; top: -10%; right: -8%; opacity: 0.3;
+        }
+        .sirf-shape-2 {
+            width: clamp(60px, 8vw, 100px); height: clamp(60px, 8vw, 100px);
+            background: #fbbf24; bottom: 20%; right: 15%; opacity: 0.5;
         }
 
-        /* ===== SCROLL CUE ===== */
-        .scroll-cue {
-            position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
-            z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; opacity: 0;
+        /* ===== SCENE 7: PHILOSOPHY — WARM PAPER ===== */
+        .scene-philosophy {
+            background: #faf7f2; color: #1a1a2e;
+            padding: 8rem 0; min-height: auto;
         }
-        .scroll-cue span { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.35em; color: var(--surface25); }
-        .scroll-cue-line { width: 1px; height: 50px; position: relative; overflow: hidden; }
-        .scroll-cue-line::after {
-            content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent, var(--cream), transparent);
-            animation: cueSlide 2s ease-in-out infinite;
-        }
-        @keyframes cueSlide { 0% { top: -100% } 100% { top: 100% } }
-
-        /* ===== PHILOSOPHY ===== */
-        .philosophy {
-            position: relative; z-index: 5; min-height: 100vh;
-            display: flex; align-items: center; justify-content: center; padding: 8rem 2rem;
-        }
-        .philosophy-inner { max-width: 750px; text-align: center; }
+        .phil-inner { max-width: 800px; margin: 0 auto; padding: 0 4rem; text-align: center; }
         .phil-line {
-            font-size: clamp(1.6rem, 3.5vw, 2.8rem); font-weight: 700;
-            line-height: 1.4; letter-spacing: -0.01em; margin-bottom: 0.5rem; overflow: hidden;
+            font-size: clamp(1.5rem, 3.5vw, 2.6rem); font-weight: 700;
+            line-height: 1.4; letter-spacing: -0.01em; margin-bottom: 0.3rem;
+            overflow: hidden;
         }
-        .phil-line .word { display: inline-block; transform: translateY(100%); opacity: 0; }
-        .phil-highlight {
-            background: linear-gradient(135deg, var(--green), #7dffb8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        .phil-line .word { display: inline-block; transform: translateY(110%); opacity: 0; }
+        .phil-highlight { color: #059669; }
+        .phil-divider { width: 60px; height: 2px; background: #d1d5db; margin: 2.5rem auto; transform: scaleX(0); }
+        .phil-sub {
+            font-size: 1.05rem; color: #6b7280; line-height: 1.8;
+            font-weight: 400; margin-top: 1.5rem; opacity: 0; transform: translateY(20px);
         }
-        .phil-divider { width: 60px; height: 2px; background: var(--surface25); margin: 2.5rem auto; transform: scaleX(0); }
-        .phil-sub { font-size: 1.05rem; color: var(--grey); line-height: 1.7; font-weight: 400; margin-top: 1.5rem; opacity: 0; transform: translateY(20px); }
 
-        /* ===== PLAYGROUND ===== */
-        .playground { position: relative; z-index: 5; padding: 4rem 2rem 6rem; }
+        /* ===== SCENE 8: PLAYGROUND — DARK WITH COLOR ACCENTS ===== */
+        .scene-playground { background: #0f0a1e; color: #ece7ff; padding: 6rem 0; min-height: auto; }
+        .pg-inner { max-width: 1000px; margin: 0 auto; padding: 0 4rem; }
         .pg-header { text-align: center; margin-bottom: 4rem; }
         .pg-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.75rem; opacity: 0; }
-        .pg-sub { font-size: 1rem; color: var(--grey); font-weight: 400; opacity: 0; }
-        .pg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; max-width: 900px; margin: 0 auto; }
+        .pg-sub { font-size: 1rem; color: #8b8b9e; font-weight: 400; opacity: 0; }
+        .pg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
         .pg-card {
-            background: #1a1c1b; border: 1px solid #2a2c2b; border-radius: 16px;
+            background: #1a1533; border: 1px solid #2d2650; border-radius: 16px;
             overflow: hidden; opacity: 0; transform: translateY(40px);
             transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
         }
         .pg-card-body { padding: 1.5rem 2rem 2rem; }
         .pg-card.clickable { cursor: pointer; }
         .pg-card.clickable:hover {
-            border-color: var(--lilac); transform: translateY(-6px) !important;
-            box-shadow: 0 20px 60px rgba(157,149,255,0.08);
+            border-color: #7c3aed; transform: translateY(-6px) !important;
+            box-shadow: 0 20px 60px rgba(124,58,237,0.12);
         }
-        .pg-card.coming-soon { opacity: 0; border-style: dashed; border-color: #2a2c2b; }
+        .pg-card.coming-soon { border-style: dashed; }
         .pg-card-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.5rem; }
         .pg-preview { display: flex; gap: 3px; height: 160px; }
         .pg-preview img { flex: 1; object-fit: cover; min-width: 0; filter: brightness(0.85); transition: filter 0.4s, flex 0.4s; }
         .pg-card.clickable:hover .pg-preview img { filter: brightness(1); }
         .pg-card.clickable:hover .pg-preview img:hover { flex: 1.5; }
         .pg-card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.6rem; }
-        .pg-card-desc { font-size: 0.9rem; color: var(--grey); line-height: 1.6; font-weight: 400; }
-        .pg-card-tag { display: inline-block; margin-top: 1.25rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.35rem 0.9rem; border-radius: 100px; border: 1px solid var(--surface25); color: var(--grey); }
-        .pg-card-arrow { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1.5rem; font-size: 0.8rem; color: var(--lilac); letter-spacing: 0.05em; font-weight: 600; }
+        .pg-card-desc { font-size: 0.9rem; color: #8b8b9e; line-height: 1.6; font-weight: 400; }
+        .pg-card-tag { display: inline-block; margin-top: 1.25rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.35rem 0.9rem; border-radius: 100px; border: 1px solid #2d2650; color: #8b8b9e; }
+        .pg-card-arrow { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1.5rem; font-size: 0.8rem; color: #7c3aed; letter-spacing: 0.05em; font-weight: 600; }
         .pg-card-arrow svg { transition: transform 0.3s; }
         .pg-card.clickable:hover .pg-card-arrow svg { transform: translateX(4px); }
-        .footer { text-align: center; padding: 5rem 2rem; font-size: 0.85rem; color: var(--surface25); position: relative; z-index: 5; }
+
+        .footer { text-align: center; padding: 5rem 2rem; font-size: 0.85rem; color: #3d3658; background: #0f0a1e; }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .intro { height: 800vh; }
+            .scene-inner { padding: 4rem 1.5rem; }
             .pg-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-            .playground { padding: 3rem 1.25rem 4rem; }
-            .text-glow { width: 250px; height: 180px; filter: blur(60px); }
-        }
-        @media (max-width: 500px) {
-            .sirf-text { font-size: clamp(1.8rem, 8vw, 3rem); }
+            .pg-inner { padding: 0 1.5rem; }
+            .phil-inner { padding: 0 1.5rem; }
+            .spark-content { text-align: left; }
+            .spark-line { margin-left: 0; transform-origin: left; }
+            .q-punct, .spark-punct { display: none; }
         }
     </style>
 </head>
 <body>
 <div class="grain"></div>
 <div id="loader"></div>
-<div class="bg-color" id="bgColor"></div>
 
-<div id="smooth-wrapper">
-<div id="smooth-content">
+<!-- ===== SCENE 1: सोच ===== -->
+<section class="scene scene-hindi" id="sceneHindi">
+    <div class="shape hindi-shape-1" id="hShape1"></div>
+    <div class="shape hindi-shape-2" id="hShape2"></div>
+    <div class="scene-inner">
+        <div class="hindi-hero font-hindi" id="hindiHero">सोच</div>
+    </div>
+    <div class="scroll-hint" id="scrollHint">Scroll</div>
+</section>
 
-<section class="intro" id="intro">
-    <div class="intro-pin" id="introPin">
-        <canvas id="particleCanvas"></canvas>
-        <canvas id="disintegrateCanvas"></canvas>
-        <div class="text-glow" id="textGlow"></div>
-        <div class="vignette"></div>
-        <div class="text-layer">
-            <div class="stage" id="s0">
-                <div class="hero-font hindi-font" id="hindiText">सोच</div>
-            </div>
-            <div class="stage" id="sEng">
-                <span class="soch-base" id="sochWord"><span id="sochLetters">Soch</span><span class="punct-mark" id="pQ" style="color:var(--lilac)">?</span><span class="punct-mark" id="pE" style="color:var(--orange)">!</span><span class="punct-mark" id="pP" style="color:var(--red)">.</span></span>
-                <div class="stage-line" id="lineQ" style="background:var(--lilac);"></div>
-                <div class="stage-line" id="lineE" style="background:var(--orange);"></div>
-                <div class="stage-line" id="lineP" style="background:var(--red);"></div>
-                <div class="sub-label" id="subQ" style="color:var(--lilac)">the question</div>
-                <div class="sub-label" id="subE" style="color:var(--orange)">the spark</div>
-                <div class="sub-label" id="subP" style="color:var(--red)">the conviction</div>
-            </div>
-            <div class="stage" id="sSirf" style="text-align:center;white-space:normal;">
-                <div class="sirf-text" id="sirfText">Sirf Ek Soch</div>
-                <div class="sirf-sub" id="sirfSub">just one thought is all it takes</div>
-            </div>
-        </div>
-        <div class="scroll-cue" id="scrollCue"><span>Scroll</span><div class="scroll-cue-line"></div></div>
+<!-- ===== SCENE 2: Soch ===== -->
+<section class="scene scene-soch" id="sceneSoch">
+    <div class="shape shape-rect soch-shape-1" id="sochShape1"></div>
+    <div class="shape soch-shape-2" id="sochShape2"></div>
+    <div class="scene-inner">
+        <div class="soch-hero font-display" id="sochHero">Soch</div>
+        <div class="soch-meaning font-body" id="sochMeaning">A thought · An idea · A spark of curiosity</div>
     </div>
 </section>
 
-<section class="philosophy" id="philosophy">
-    <div class="philosophy-inner">
-        <div class="phil-line"><span class="word">If you are curious in life,</span></div>
-        <div class="phil-line"><span class="word">you have a <span class="phil-highlight">superpower</span>.</span></div>
+<!-- ===== SCENE 3: Soch? ===== -->
+<section class="scene scene-question" id="sceneQuestion">
+    <div class="q-punct font-display" id="qPunct">?</div>
+    <div class="shape q-shape-1" id="qShape1"></div>
+    <div class="scene-inner">
+        <div class="q-word font-display" id="qWord">Soch<span style="color:#c4b5fd">?</span></div>
+        <div class="q-label font-serif" id="qLabel">the question</div>
+        <div class="q-line" id="qLine"></div>
+    </div>
+</section>
+
+<!-- ===== SCENE 4: Soch! ===== -->
+<section class="scene scene-spark" id="sceneSpark">
+    <div class="spark-punct font-display" id="sparkPunct">!</div>
+    <div class="shape shape-rounded spark-shape-1" id="sparkShape1"></div>
+    <div class="scene-inner">
+        <div class="spark-content">
+            <div class="spark-word font-display" id="sparkWord">Soch<span style="color:#92400e">!</span></div>
+            <div class="spark-label font-serif" id="sparkLabel">the spark</div>
+            <div class="spark-line" id="sparkLine"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SCENE 5: Soch. ===== -->
+<section class="scene scene-conviction" id="sceneConviction">
+    <div class="shape conv-shape-1" id="convShape1"></div>
+    <div class="scene-inner">
+        <div class="conv-word font-display" id="convWord">Soch</div>
+        <div class="conv-period font-display" id="convPeriod">.</div>
+        <div class="conv-label font-serif" id="convLabel">the conviction</div>
+        <div class="conv-line" id="convLine"></div>
+    </div>
+</section>
+
+<!-- ===== SCENE 6: Sirf Ek Soch ===== -->
+<section class="scene scene-sirf" id="sceneSirf">
+    <div class="shape sirf-shape-1" id="sirfShape1"></div>
+    <div class="shape sirf-shape-2" id="sirfShape2"></div>
+    <div class="scene-inner">
+        <div class="sirf-hero font-display" id="sirfHero">Sirf Ek <em>Soch</em></div>
+        <div class="sirf-sub font-body" id="sirfSub">just one thought is all it takes</div>
+    </div>
+</section>
+
+<!-- ===== SCENE 7: Philosophy ===== -->
+<section class="scene scene-philosophy" id="scenePhilosophy">
+    <div class="phil-inner">
+        <div class="phil-line font-display"><span class="word">If you are curious in life,</span></div>
+        <div class="phil-line font-display"><span class="word">you have a <span class="phil-highlight">superpower</span>.</span></div>
         <div class="phil-divider" id="philDivider"></div>
-        <div class="phil-line"><span class="word">That curiosity deserves</span></div>
-        <div class="phil-line"><span class="word">to be <span class="phil-highlight">celebrated</span>.</span></div>
-        <div class="phil-sub" id="philSub">A space to experiment, to learn, to create — and to show my team and my daughter that just one thought can unlock unlimited potential.</div>
+        <div class="phil-line font-display"><span class="word">That curiosity deserves</span></div>
+        <div class="phil-line font-display"><span class="word">to be <span class="phil-highlight">celebrated</span>.</span></div>
+        <div class="phil-sub font-body" id="philSub">A space to experiment, to learn, to create — and to show my team and my daughter that just one thought can unlock unlimited potential.</div>
     </div>
 </section>
 
-<section class="playground" id="playground">
-    <div class="pg-header">
-        <div class="pg-title" id="pgTitle">The Playground</div>
-        <div class="pg-sub" id="pgSub">Things I'm learning. Things I'm building. All from curiosity.</div>
-    </div>
-    <div class="pg-grid">
-        <div class="pg-card clickable" onclick="window.location.href='/gallery'">
-            <div class="pg-preview">
-                <img src="img/art1.png" alt="Soch digital art">
-                <img src="img/art2.png" alt="Be Curious illustration">
-                <img src="img/art3.png" alt="Samurai sheep art">
-            </div>
-            <div class="pg-card-body">
-                <div class="pg-card-title">Digital Art from Midjourney</div>
-                <div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment. Every prompt, a new world.</div>
-                <div class="pg-card-arrow">View Gallery <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-            </div>
+<!-- ===== SCENE 8: Playground ===== -->
+<section class="scene scene-playground" id="scenePlayground">
+    <div class="pg-inner">
+        <div class="pg-header">
+            <div class="pg-title font-display" id="pgTitle">The Playground</div>
+            <div class="pg-sub font-body" id="pgSub">Things I'm learning. Things I'm building. All from curiosity.</div>
         </div>
-        <div class="pg-card coming-soon">
-            <div class="pg-card-body">
-                <div class="pg-card-icon" style="background:rgba(124,124,111,0.1);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c7c6f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <div class="pg-grid">
+            <div class="pg-card clickable" onclick="window.location.href='/gallery'">
+                <div class="pg-preview">
+                    <img src="img/art1.png" alt="Soch digital art">
+                    <img src="img/art2.png" alt="Be Curious illustration">
+                    <img src="img/art3.png" alt="Samurai sheep art">
                 </div>
-                <div class="pg-card-title">What's Next?</div>
-                <div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div>
-                <span class="pg-card-tag">Coming Soon</span>
+                <div class="pg-card-body">
+                    <div class="pg-card-title font-display">Digital Art from Midjourney</div>
+                    <div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment. Every prompt, a new world.</div>
+                    <div class="pg-card-arrow">View Gallery <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </div>
+            </div>
+            <div class="pg-card coming-soon">
+                <div class="pg-card-body">
+                    <div class="pg-card-icon" style="background:rgba(139,139,158,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b8b9e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div class="pg-card-title font-display">What's Next?</div>
+                    <div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div>
+                    <span class="pg-card-tag">Coming Soon</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
-<div class="footer">soch.me · built with curiosity</div>
-
-</div></div>
+<div class="footer font-body">soch.me · built with curiosity</div>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/ScrollSmoother.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/SplitText.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/CustomEase.min.js"></script>
 <script>
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, CustomEase);
+gsap.registerPlugin(ScrollTrigger);
 
 const IS_MOBILE = window.innerWidth < 768;
-const bgEl = document.getElementById('bgColor');
 
-// ===== SCROLLSMOOTHER — desktop only =====
-if (!IS_MOBILE && typeof ScrollSmoother !== 'undefined') {
-    ScrollSmoother.create({ wrapper: '#smooth-wrapper', content: '#smooth-content', smooth: 1.2, effects: true });
-}
-
-// ===== BACKGROUND SHIFT — GPU friendly =====
-function setBg(hex) { gsap.to(bgEl, { backgroundColor: hex, duration: 2, ease: 'power2.inOut' }); }
-
-// ====================================================================
-// PARTICLES — DESKTOP ONLY
-// On mobile we skip canvas entirely for performance
-// ====================================================================
-const canvas = document.getElementById('particleCanvas');
-const ctx = canvas.getContext('2d');
-let pts = [], orbs = [];
-let pC = { r: 255, g: 252, b: 225, speed: 1, burst: false, calm: false };
-
-if (!IS_MOBILE) {
-    function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
-    resize(); addEventListener('resize', resize);
-
-    class Pt {
-        constructor() { this.init(); }
-        init() {
-            this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
-            this.sz = Math.random() * 2.5 + 0.5; this.bSz = this.sz;
-            this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
-            this.op = Math.random() * 0.5 + 0.1; this.bOp = this.op;
-            this.ph = Math.random() * Math.PI * 2; this.ps = Math.random() * 0.015 + 0.005;
-        }
-        update() {
-            this.ph += this.ps;
-            const p = Math.sin(this.ph) * 0.35 + 0.65;
-            this.op = this.bOp * p; this.sz = this.bSz * (p * 0.4 + 0.8);
-            if (pC.burst) {
-                const cx = canvas.width/2, cy = canvas.height/2;
-                const dx = this.x - cx, dy = this.y - cy, d = Math.sqrt(dx*dx+dy*dy) || 1;
-                this.x += (dx/d)*3; this.y += (dy/d)*3; this.sz = this.bSz * 1.8;
-            } else if (pC.calm) {
-                this.x += this.vx * 0.2; this.y += this.vy * 0.2; this.op = this.bOp * 0.7;
-            } else {
-                this.x += this.vx * pC.speed; this.y += this.vy * pC.speed;
-            }
-            if (this.x < -20) this.x = canvas.width + 20;
-            if (this.x > canvas.width + 20) this.x = -20;
-            if (this.y < -20) this.y = canvas.height + 20;
-            if (this.y > canvas.height + 20) this.y = -20;
-        }
-        draw() {
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.sz, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(${pC.r},${pC.g},${pC.b},${this.op})`; ctx.fill();
-        }
-    }
-    for (let i = 0; i < 70; i++) pts.push(new Pt());
-
-    class Orb {
-        constructor() {
-            this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
-            this.sz = Math.random()*25+15; this.baseX = this.x; this.baseY = this.y;
-            this.driftX = Math.random()*80+40; this.driftY = Math.random()*60+30;
-            this.spdX = Math.random()*0.0004+0.0002; this.spdY = Math.random()*0.0003+0.0002;
-            this.phX = Math.random()*Math.PI*2; this.phY = Math.random()*Math.PI*2;
-            this.op = Math.random()*0.04+0.02;
-            this.pulseSpd = Math.random()*0.002+0.001; this.pulsePh = Math.random()*Math.PI*2;
-        }
-        update() {
-            this.phX += this.spdX; this.phY += this.spdY; this.pulsePh += this.pulseSpd;
-            this.x = this.baseX + Math.sin(this.phX) * this.driftX;
-            this.y = this.baseY + Math.cos(this.phY) * this.driftY;
-            if (this.x < -50) this.baseX += canvas.width+100;
-            if (this.x > canvas.width+50) this.baseX -= canvas.width+100;
-            if (this.y < -50) this.baseY += canvas.height+100;
-            if (this.y > canvas.height+50) this.baseY -= canvas.height+100;
-        }
-        draw() {
-            const pulse = Math.sin(this.pulsePh)*0.3+0.7;
-            const curOp = this.op*pulse, curSz = this.sz*(pulse*0.3+0.85);
-            const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,curSz);
-            grad.addColorStop(0, `rgba(${pC.r},${pC.g},${pC.b},${curOp})`);
-            grad.addColorStop(0.4, `rgba(${pC.r},${pC.g},${pC.b},${curOp*0.5})`);
-            grad.addColorStop(1, `rgba(${pC.r},${pC.g},${pC.b},0)`);
-            ctx.beginPath(); ctx.arc(this.x,this.y,curSz,0,Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-        }
-    }
-    for (let i = 0; i < 10; i++) orbs.push(new Orb());
-
-    function drawLines() {
-        for (let i = 0; i < pts.length; i++) {
-            for (let j = i+1; j < pts.length; j++) {
-                const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y, d = Math.sqrt(dx*dx+dy*dy);
-                if (d < 110) {
-                    ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
-                    ctx.strokeStyle = `rgba(${pC.r},${pC.g},${pC.b},${(1-d/110)*0.05})`;
-                    ctx.lineWidth = 0.5; ctx.stroke();
-                }
-            }
-        }
-    }
-    function pLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        orbs.forEach(o => { o.update(); o.draw(); });
-        pts.forEach(p => { p.update(); p.draw(); });
-        drawLines();
-        requestAnimationFrame(pLoop);
-    }
-    pLoop();
-}
-
-// ===== DISINTEGRATION — desktop only =====
-const dC = document.getElementById('disintegrateCanvas');
-const dX = dC.getContext('2d');
-let dP = [], disin = false;
-
-if (!IS_MOBILE) {
-    function resizeD() { dC.width = innerWidth; dC.height = innerHeight; }
-    resizeD(); addEventListener('resize', resizeD);
-}
-
-class DP {
-    constructor(x,y) {
-        this.x=x;this.y=y;this.sz=Math.random()*3+1;
-        this.vx=(Math.random()-0.5)*3;this.vy=(Math.random()-0.5)*3+0.5;
-        this.g=0.02+Math.random()*0.02;this.op=1;this.dc=0.002+Math.random()*0.003;
-        this.rot=Math.random()*360;this.rs=(Math.random()-0.5)*10;
-    }
-    update() { this.x+=this.vx;this.y+=this.vy;this.vy+=this.g;this.vx*=0.99;this.op-=this.dc;this.rot+=this.rs;if(this.op<0)this.op=0; }
-    draw() { dX.save();dX.translate(this.x,this.y);dX.rotate(this.rot*Math.PI/180);dX.fillStyle=`rgba(171,255,132,${this.op})`;dX.fillRect(-this.sz/2,-this.sz/2,this.sz,this.sz);dX.restore(); }
-}
-function spawnD() {
-    if (IS_MOBILE) return;
-    dC.width=innerWidth;dC.height=innerHeight;
-    const el=document.getElementById('sirfText'),r=el.getBoundingClientRect();dP=[];
-    const cx=r.width>0?r.left+r.width/2:innerWidth/2;
-    const cy=r.height>0?r.top+r.height/2:innerHeight/2;
-    const w=r.width>0?r.width:300,h=r.height>0?r.height:80;
-    for(let i=0;i<180;i++) dP.push(new DP(cx-w/2+Math.random()*w,cy-h/2+Math.random()*h));
-    disin=true;dC.style.opacity='1';
-}
-function dLoop() {
-    if(!disin){requestAnimationFrame(dLoop);return;}
-    dX.clearRect(0,0,dC.width,dC.height);let alive=false;
-    dP.forEach(p=>{p.update();p.draw();if(p.op>0)alive=true;});
-    if(!alive){disin=false;dC.style.opacity=0;}
-    requestAnimationFrame(dLoop);
-}
-if (!IS_MOBILE) dLoop();
-
-// ===== AMBIENT =====
-gsap.set('#s0', { opacity: 1 });
-gsap.to('#textGlow', { scale: 1.1, opacity: 0.9, duration: 4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-
-// ===== ENTRANCE (auto-plays on load) =====
+// ===== ENTRANCE =====
 window.addEventListener('load', () => {
-    document.body.style.overflow = 'hidden';
     const loader = document.getElementById('loader');
+    const tl = gsap.timeline({ delay: 0.2 });
 
-    const entrance = gsap.timeline({
-        delay: 0.3,
-        onComplete: () => {
-            document.body.style.overflow = '';
-            gsap.to('.scroll-cue', { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' });
-        }
-    });
-
-    // Loader out
-    entrance.to(loader, { opacity: 0, duration: 0.5, ease: 'power2.inOut', onComplete: () => { loader.style.display = 'none'; } })
-    // Scene in
-    .to('#introPin', { opacity: 1, duration: 1.5, ease: 'power2.inOut' })
-    // Particles (desktop only)
-    .to('#particleCanvas', { opacity: IS_MOBILE ? 0 : 1, duration: 2, ease: 'power3.out' }, '-=0.8')
-    // Glow
-    .to('#textGlow', { opacity: 0.8, scale: 1, duration: 1.5, ease: 'power3.out' }, '-=1.5')
-    // Hindi text — simple y+opacity, no filter during entrance for snappiness
-    .fromTo('#hindiText', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.8')
-    // Grain
-    .fromTo('.grain', { opacity: 0 }, { opacity: 0.035, duration: 0.8 }, '-=0.4');
+    tl.to(loader, { opacity: 0, duration: 0.5, ease: 'power2.inOut', onComplete: () => loader.style.display = 'none' })
+      .fromTo('.grain', { opacity: 0 }, { opacity: 0.03, duration: 0.6 }, '-=0.2')
+      // Hindi entrance
+      .fromTo('#hindiHero', { opacity: 0, y: 60, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power3.out' }, '-=0.3')
+      // Shapes float in
+      .fromTo('#hShape1', { opacity: 0, scale: 0.5 }, { opacity: 0.7, scale: 1, duration: 1.4, ease: 'power2.out' }, '-=0.9')
+      .fromTo('#hShape2', { opacity: 0, y: 40 }, { opacity: 0.6, y: 0, duration: 1, ease: 'power2.out' }, '-=1')
+      // Scroll hint
+      .to('#scrollHint', { opacity: 1, duration: 1 }, '-=0.3');
 });
-gsap.set('.scroll-cue', { y: 20 });
 
-// ====================================================================
-// MASTER SCROLL TIMELINE — using gsap.matchMedia() for desktop/mobile
-// KEY RULES:
-//   - NO filter:blur() during scroll (GPU killer)
-//   - Soch stays cream always — only punctuation owns color
-//   - Transform + opacity only during scrub
-//   - Mobile: shorter scroll, no canvas, simpler animations
-// ====================================================================
-
-const mm = gsap.matchMedia();
-
-mm.add({
-    isDesktop: '(min-width: 769px)',
-    isMobile: '(max-width: 768px)',
-}, (context) => {
-    let { isDesktop, isMobile } = context.conditions;
-
-    const scrubVal = isDesktop ? 0.8 : 1;
-
-    const tl = gsap.timeline({
+// ===== FLOATING SHAPES — gentle parallax via scroll =====
+gsap.utils.toArray('.shape').forEach(shape => {
+    const speed = gsap.utils.random(-30, 30);
+    gsap.to(shape, {
+        y: speed,
         scrollTrigger: {
-            trigger: '#intro',
-            start: 'top top',
-            end: 'bottom bottom',
-            pin: '#introPin',
-            scrub: scrubVal,
-            anticipatePin: 1,
+            trigger: shape.closest('.scene'),
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.5,
         }
     });
-
-    // Ensure pin is visible
-    tl.set('#introPin', { opacity: 1 });
-
-    // ---- सोच holds ----
-    tl.to({}, { duration: 4 });
-
-    // ---- सोच → Soch (transform only, no blur) ----
-    tl.set('#sEng', { opacity: 1 })
-      .set('#sochWord', { opacity: 0, y: 30 });
-
-    tl.to('#hindiText', { opacity: 0, y: -30, duration: 3, ease: 'power2.in' })
-      .set('#s0', { opacity: 0 })
-      .to('#sochWord', { opacity: 1, y: 0, duration: 3, ease: 'power3.out' }, '-=1.5')
-      .to('#textGlow', { background: 'rgba(255,252,225,0.08)', width: isDesktop ? 550 : 300, height: isDesktop ? 320 : 200, duration: 2 }, '<');
-
-    // ---- Soch holds ----
-    tl.to({}, { duration: 3 });
-
-    // ---- ? materializes (Soch stays cream, ? is lilac) ----
-    tl.call(() => {
-        if (isDesktop) gsap.to(pC, { r: 157, g: 149, b: 255, duration: 2 });
-        setBg('#0d0e12');
-    })
-    .fromTo('#pQ', { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 5, ease: 'power2.out' })
-    .to('#textGlow', { background: 'rgba(157,149,255,0.06)', width: isDesktop ? 600 : 280, height: isDesktop ? 350 : 200, duration: 4 }, '<')
-    .to('#lineQ', { scaleX: 1, duration: 3, ease: 'power2.inOut' }, '-=3')
-    .to('#subQ', { opacity: 0.8, clipPath: 'inset(0 0% 0 0)', duration: 3, ease: 'power2.out' }, '-=2');
-
-    // ---- Soch? holds ----
-    tl.to({}, { duration: 4 });
-
-    // ---- ? → ! ----
-    tl.to('#pQ', { opacity: 0, scale: 0.6, duration: 2, ease: 'power2.inOut' })
-      .to('#subQ', { opacity: 0, clipPath: 'inset(0 0 0 100%)', duration: 1.5 }, '<')
-      .to('#lineQ', { scaleX: 0, duration: 1.5 }, '<')
-      .call(() => {
-          if (isDesktop) { gsap.to(pC, { r: 255, g: 135, b: 9, duration: 1 }); pC.burst = true; setTimeout(() => { pC.burst = false; }, 800); }
-          setBg('#12100d');
-      })
-      .fromTo('#pE', { scale: 2.5, opacity: 0, y: -15 }, { scale: 1, opacity: 1, y: 0, duration: 4, ease: 'back.out(1.7)' })
-      .to('#textGlow', { background: 'rgba(255,135,9,0.06)', width: isDesktop ? 620 : 300, height: isDesktop ? 370 : 210, duration: 3 }, '<')
-      .to('#lineE', { scaleX: 1, duration: 2.5, ease: 'power2.inOut' }, '-=3')
-      .to('#subE', { opacity: 0.8, clipPath: 'inset(0 0% 0 0)', duration: 2.5, ease: 'power2.out' }, '-=2');
-
-    // ---- Soch! holds ----
-    tl.to({}, { duration: 4 });
-
-    // ---- ! → . ----
-    tl.to('#pE', { opacity: 0, scale: 0.6, duration: 2, ease: 'power2.inOut' })
-      .to('#subE', { opacity: 0, clipPath: 'inset(0 0 0 100%)', duration: 1.5 }, '<')
-      .to('#lineE', { scaleX: 0, duration: 1.5 }, '<')
-      .call(() => {
-          if (isDesktop) { gsap.to(pC, { r: 255, g: 68, b: 68, duration: 1.5 }); pC.calm = true; pC.speed = 0.3; }
-          setBg('#120d0d');
-      })
-      .fromTo('#pP', { y: -60, opacity: 0 }, { y: 0, opacity: 1, duration: 3, ease: 'bounce.out' })
-      .to('#textGlow', { background: 'rgba(255,68,68,0.07)', width: isDesktop ? 600 : 280, height: isDesktop ? 350 : 200, duration: 3 }, '<')
-      .to('#lineP', { scaleX: 1, duration: 2.5, ease: 'power2.inOut' }, '-=3')
-      .to('#subP', { opacity: 0.8, clipPath: 'inset(0 0% 0 0)', duration: 2.5, ease: 'power2.out' }, '-=2');
-
-    // ---- Soch. holds ----
-    tl.to({}, { duration: 5 });
-
-    // ---- Soch. → Sirf Ek Soch ----
-    tl.to('#sEng', { opacity: 0, scale: 0.95, duration: 3, ease: 'power2.in' })
-      .to('#lineP', { scaleX: 0, duration: 1 }, '<')
-      .to('#subP', { opacity: 0, duration: 1 }, '<')
-      .to('#textGlow', { opacity: 0.3, duration: 2 }, '<')
-      .set('#sEng', { opacity: 0 })
-      .set('#sSirf', { opacity: 1 })
-      .call(() => {
-          if (isDesktop) { gsap.to(pC, { r: 171, g: 255, b: 132, duration: 2 }); pC.calm = false; pC.speed = 0.8; }
-          setBg('#0d120e');
-      })
-      .fromTo('#sirfText', { opacity: 0, scale: 0.4, y: 60 }, { opacity: 1, scale: 1, y: 0, duration: 7, ease: 'power2.out' })
-      .to('#textGlow', { background: 'rgba(171,255,132,0.06)', width: isDesktop ? 700 : 320, height: isDesktop ? 350 : 200, opacity: 1, duration: 5 }, '<2')
-      .to('#sirfSub', { opacity: 0.7, clipPath: 'inset(0 0% 0 0)', duration: 4, ease: 'power2.out' }, '-=3');
-
-    // ---- Sirf Ek Soch holds ----
-    tl.to({}, { duration: 6 });
-
-    // ---- Disintegration ----
-    tl.call(() => { spawnD(); setBg('#0e100f'); })
-      .to('#sirfText', { opacity: 0, scale: 1.05, duration: 4, ease: 'power2.in' })
-      .to('#sirfSub', { opacity: 0, clipPath: 'inset(0 0 0 100%)', duration: 2 }, '<')
-      .to('#textGlow', { opacity: 0, duration: 3 }, '<')
-      .to({}, { duration: 3 })
-      .to('#introPin', { opacity: 0, duration: 3, ease: 'power2.in' });
-
-    // Scroll cue fades early
-    tl.to('#scrollCue', { opacity: 0, duration: 2 }, 0.5);
 });
 
-// ===== PHILOSOPHY — with mask text reveal =====
-gsap.to(bgEl, { backgroundColor: '#0e100f', duration: 1, scrollTrigger: { trigger: '#philosophy', start: 'top 90%', toggleActions: 'play none none reverse' } });
+// ===== SCENE 2: Soch reveal =====
+const sochTL = gsap.timeline({
+    scrollTrigger: { trigger: '#sceneSoch', start: 'top 70%', toggleActions: 'play none none reverse' }
+});
+sochTL.fromTo('#sochHero', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+      .fromTo('#sochMeaning', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+      .fromTo('#sochShape1', { opacity: 0, x: 80 }, { opacity: 0.9, x: 0, duration: 1.2, ease: 'power2.out' }, '-=1')
+      .fromTo('#sochShape2', { opacity: 0, scale: 0.3 }, { opacity: 0.8, scale: 1, duration: 1, ease: 'back.out(1.7)' }, '-=0.8');
 
-// Word-level reveal — words slide up from behind overflow:hidden mask
+// ===== SCENE 3: Soch? =====
+const qTL = gsap.timeline({
+    scrollTrigger: { trigger: '#sceneQuestion', start: 'top 70%', toggleActions: 'play none none reverse' }
+});
+qTL.fromTo('#qWord', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+   .fromTo('#qPunct', { opacity: 0, scale: 0.5, x: -50 }, { opacity: 1, scale: 1, x: 0, duration: 1.4, ease: 'power2.out' }, '-=0.8')
+   .fromTo('#qLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.6')
+   .to('#qLine', { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, '-=0.4')
+   .fromTo('#qShape1', { opacity: 0, y: 30 }, { opacity: 0.7, y: 0, duration: 1, ease: 'power2.out' }, '-=1');
+
+// ===== SCENE 4: Soch! =====
+const sparkTL = gsap.timeline({
+    scrollTrigger: { trigger: '#sceneSpark', start: 'top 70%', toggleActions: 'play none none reverse' }
+});
+sparkTL.fromTo('#sparkWord', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+       .fromTo('#sparkPunct', { opacity: 0, scale: 0.5, x: 50 }, { opacity: 1, scale: 1, x: 0, duration: 1.4, ease: 'back.out(1.5)' }, '-=0.8')
+       .fromTo('#sparkLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.6')
+       .to('#sparkLine', { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, '-=0.4')
+       .fromTo('#sparkShape1', { opacity: 0, rotate: -10 }, { opacity: 0.5, rotate: 0, duration: 1.2, ease: 'power2.out' }, '-=1');
+
+// ===== SCENE 5: Soch. =====
+const convTL = gsap.timeline({
+    scrollTrigger: { trigger: '#sceneConviction', start: 'top 70%', toggleActions: 'play none none reverse' }
+});
+convTL.fromTo('#convWord', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+      .fromTo('#convPeriod', { opacity: 0, y: -30, scale: 1.3 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'bounce.out' }, '-=0.5')
+      .fromTo('#convLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+      .to('#convLine', { scaleX: 1, duration: 1, ease: 'power2.inOut' }, '-=0.3')
+      .fromTo('#convShape1', { opacity: 0 }, { opacity: 0.3, duration: 1 }, '-=1');
+
+// ===== SCENE 6: Sirf Ek Soch =====
+const sirfTL = gsap.timeline({
+    scrollTrigger: { trigger: '#sceneSirf', start: 'top 70%', toggleActions: 'play none none reverse' }
+});
+sirfTL.fromTo('#sirfHero', { opacity: 0, y: 50, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power3.out' })
+      .fromTo('#sirfSub', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+      .fromTo('#sirfShape1', { opacity: 0, scale: 0.7 }, { opacity: 0.3, scale: 1, duration: 1.4, ease: 'power2.out' }, '-=1.2')
+      .fromTo('#sirfShape2', { opacity: 0 }, { opacity: 0.5, duration: 1 }, '-=0.8');
+
+// ===== SCENE 7: Philosophy =====
 document.querySelectorAll('.phil-line .word').forEach((w, i) => {
     gsap.to(w, {
-        y: 0, opacity: 1, duration: 1, delay: i * 0.2, ease: 'power3.out',
-        scrollTrigger: { trigger: '#philosophy', start: 'top 80%', toggleActions: 'play none none reverse' }
+        y: 0, opacity: 1, duration: 1, delay: i * 0.18, ease: 'power3.out',
+        scrollTrigger: { trigger: '#scenePhilosophy', start: 'top 75%', toggleActions: 'play none none reverse' }
     });
 });
-gsap.to('#philDivider', { scaleX: 1, duration: 1, delay: 0.6, ease: 'power2.inOut',
-    scrollTrigger: { trigger: '#philosophy', start: 'top 75%', toggleActions: 'play none none reverse' } });
-gsap.to('#philSub', { opacity: 1, y: 0, duration: 1.2, delay: 1, ease: 'power2.out',
-    scrollTrigger: { trigger: '#philosophy', start: 'top 70%', toggleActions: 'play none none reverse' } });
+gsap.to('#philDivider', { scaleX: 1, duration: 1, delay: 0.5, ease: 'power2.inOut',
+    scrollTrigger: { trigger: '#scenePhilosophy', start: 'top 70%', toggleActions: 'play none none reverse' } });
+gsap.to('#philSub', { opacity: 1, y: 0, duration: 1.2, delay: 0.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#scenePhilosophy', start: 'top 65%', toggleActions: 'play none none reverse' } });
 
-// ===== PLAYGROUND =====
+// ===== SCENE 8: Playground =====
 gsap.to('#pgTitle', { opacity: 1, duration: 0.8, ease: 'power3.out',
-    scrollTrigger: { trigger: '#playground', start: 'top 70%', toggleActions: 'play none none reverse' } });
+    scrollTrigger: { trigger: '#scenePlayground', start: 'top 70%', toggleActions: 'play none none reverse' } });
 gsap.to('#pgSub', { opacity: 1, duration: 0.8, delay: 0.15, ease: 'power3.out',
-    scrollTrigger: { trigger: '#playground', start: 'top 70%', toggleActions: 'play none none reverse' } });
+    scrollTrigger: { trigger: '#scenePlayground', start: 'top 70%', toggleActions: 'play none none reverse' } });
 gsap.utils.toArray('.pg-card').forEach((c, i) => {
     gsap.to(c, { opacity: 1, y: 0, duration: 0.7, delay: i * 0.12, ease: 'power3.out',
         scrollTrigger: { trigger: c, start: 'top 85%', toggleActions: 'play none none reverse' } });

@@ -189,19 +189,22 @@
         }
 
         /* ===== SCENE 6: SIRF EK SOCH — FRESH GREEN ===== */
-        .scene-sirf { background: #065f46; color: #d1fae5; }
+        .scene-sirf { background: #065f46; color: #faf6f0; }
         .sirf-hero {
             font-size: clamp(3rem, 9vw, 7.5rem); font-weight: 700;
-            letter-spacing: -0.03em; color: #ecfdf5; line-height: 1.05;
+            letter-spacing: -0.03em; color: #faf6f0; line-height: 1.05;
             opacity: 0;
         }
         .sirf-hero em {
             font-style: normal; color: #6ee7b7;
         }
-        .sirf-sub {
-            font-size: clamp(0.95rem, 1.6vw, 1.2rem); font-weight: 300;
-            letter-spacing: 0.2em; text-transform: uppercase;
+        .sirf-sub-hindi {
+            font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 400;
             color: #6ee7b7; margin-top: 2.5rem; opacity: 0;
+        }
+        .sirf-sub-english {
+            font-size: clamp(0.9rem, 1.4vw, 1.1rem); font-weight: 300;
+            color: rgba(250,246,240,0.5); margin-top: 0.5rem; opacity: 0;
         }
         .sirf-shape-1 {
             width: clamp(200px, 30vw, 400px); height: clamp(200px, 30vw, 400px);
@@ -355,7 +358,8 @@
     <div class="shape sirf-shape-2" id="sirfShape2"></div>
     <div class="scene-inner">
         <div class="sirf-hero font-display" id="sirfHero">Sirf Ek <em>Soch</em></div>
-        <div class="sirf-sub font-body" id="sirfSub">just one thought is all it takes</div>
+        <div class="sirf-sub-hindi font-hindi" id="sirfSubHindi">बस एक सोच काफ़ी है।</div>
+        <div class="sirf-sub-english font-body" id="sirfSubEnglish">Just one thought is all it takes.</div>
     </div>
 </section>
 
@@ -502,7 +506,8 @@ const sirfTL = gsap.timeline({
     scrollTrigger: { trigger: '#sceneSirf', start: 'top 70%', toggleActions: 'play none none reverse' }
 });
 sirfTL.fromTo('#sirfHero', { opacity: 0, y: 50, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power3.out' })
-      .fromTo('#sirfSub', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+      .fromTo('#sirfSubHindi', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.4')
+      .fromTo('#sirfSubEnglish', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.3')
       .fromTo('#sirfShape1', { opacity: 0, scale: 0.7 }, { opacity: 0.3, scale: 1, duration: 1.4, ease: 'power2.out' }, '-=1.2')
       .fromTo('#sirfShape2', { opacity: 0 }, { opacity: 0.5, duration: 1 }, '-=0.8');
 

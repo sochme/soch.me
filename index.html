@@ -167,22 +167,20 @@
         }
 
         /* ===== SCENE 5: Soch. — DEEP CRIMSON ===== */
-        .scene-conviction { background: #7f1d1d; color: #fecaca; }
+        .scene-conviction { background: #7f1d1d; color: #faf6f0; }
         .conv-word {
             font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700;
-            letter-spacing: -0.03em; color: #fecaca; opacity: 0;
+            letter-spacing: -0.03em; color: #faf6f0; opacity: 0;
         }
-        .conv-period {
-            font-size: clamp(6rem, 20vw, 16rem); font-weight: 700;
-            color: #fca5a5; line-height: 0.5; display: block;
-            margin-top: 1rem; opacity: 0;
+        .conv-word .conv-period {
+            color: #ffffff;
         }
         .conv-label {
-            font-size: clamp(1.1rem, 2vw, 1.6rem); font-style: italic;
-            color: #fca5a5; margin-top: 3rem; opacity: 0;
+            font-size: clamp(1.1rem, 2vw, 1.6rem); font-weight: 300;
+            color: rgba(250,246,240,0.6); margin-top: 1.5rem; opacity: 0;
         }
         .conv-line {
-            width: 120px; height: 2px; background: #dc2626;
+            width: 120px; height: 2px; background: #faf6f0;
             margin-top: 2rem; transform: scaleX(0); transform-origin: left;
         }
         .conv-shape-1 {
@@ -345,9 +343,8 @@
 <section class="scene scene-conviction" id="sceneConviction">
     <div class="shape conv-shape-1" id="convShape1"></div>
     <div class="scene-inner">
-        <div class="conv-word font-display" id="convWord">Soch</div>
-        <div class="conv-period font-display" id="convPeriod">.</div>
-        <div class="conv-label font-serif" id="convLabel">the conviction</div>
+        <div class="conv-word font-display" id="convWord">Soch<span class="conv-period">.</span></div>
+        <div class="conv-label font-body" id="convLabel">No turning back.</div>
         <div class="conv-line" id="convLine"></div>
     </div>
 </section>
@@ -496,7 +493,6 @@ const convTL = gsap.timeline({
     scrollTrigger: { trigger: '#sceneConviction', start: 'top 70%', toggleActions: 'play none none reverse' }
 });
 convTL.fromTo('#convWord', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
-      .fromTo('#convPeriod', { opacity: 0, y: -30, scale: 1.3 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'bounce.out' }, '-=0.5')
       .fromTo('#convLabel', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
       .to('#convLine', { scaleX: 1, duration: 1, ease: 'power2.inOut' }, '-=0.3')
       .fromTo('#convShape1', { opacity: 0 }, { opacity: 0.3, duration: 1 }, '-=1');

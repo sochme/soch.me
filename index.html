@@ -11,8 +11,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: auto; }
         body { overflow-x: hidden; font-family: 'Inter', sans-serif; background: #0f0a1e; }
-        #smooth-wrapper { overflow: hidden; position: fixed; inset: 0; height: 100vh; }
-        #smooth-content { overflow: visible; width: 100%; }
 
         /* ===== TYPOGRAPHY SYSTEM ===== */
         .font-display { font-family: 'Space Grotesk', sans-serif; }
@@ -228,7 +226,7 @@
             line-height: 1.4; letter-spacing: -0.01em; margin-bottom: 0.3rem;
             overflow: hidden;
         }
-        .phil-line .word { display: inline-block; transform: translateY(110%); opacity: 0; }
+        .phil-line .word { display: inline-block; }
         .phil-highlight { color: #059669; }
         .phil-sub {
             font-size: 1.05rem; color: #6b7280; line-height: 1.8;
@@ -454,7 +452,8 @@ mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
 
         tl.to(loader, { opacity: 0, duration: 0.5, ease: 'power2.inOut', onComplete: () => loader.style.display = 'none' })
           .fromTo('.grain', { opacity: 0 }, { opacity: 0.03, duration: 0.6 }, '-=0.2')
-          // Each Devanagari character materializes — a thought being born
+          // Make hero visible, then animate individual chars
+          .set('#hindiHero', { opacity: 1 })
           .from(splitHero.chars, { opacity: 0, y: 30, scale: 0.8, duration: 0.8, ease: 'power3.out', stagger: 0.15 }, '-=0.2')
           // Shapes drift in like fragments of imagination
           .fromTo('#hShape1', { opacity: 0, scale: 0.5, rotation: -15 }, { opacity: 0.7, scale: 1, rotation: 0, duration: 1.6, ease: 'power2.out' }, '-=0.6')
@@ -653,6 +652,7 @@ mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
           .fromTo('#sirfShape2', { opacity: 0 }, { opacity: 0.5, duration: 0.8 }, '-=0.6');
 
     // Scene 7 — mobile: simpler word reveal, no 3D tilt
+    gsap.set('.phil-line .word', { y: 40, opacity: 0 });
     document.querySelectorAll('.phil-line .word').forEach((w, i) => {
         gsap.to(w, {
             y: 0, opacity: 1, duration: 0.8, delay: i * 0.2, ease: 'power3.out',

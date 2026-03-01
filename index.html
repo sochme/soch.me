@@ -239,7 +239,7 @@
         .pg-header { text-align: center; margin-bottom: 4rem; }
         .pg-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.75rem; opacity: 0; }
         .pg-sub { font-size: 1rem; color: #8b8b9e; font-weight: 400; opacity: 0; }
-        .pg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .pg-grid { max-width: 600px; margin: 0 auto; }
         .pg-card {
             background: #1a1533; border: 1px solid #2d2650; border-radius: 16px;
             overflow: hidden; opacity: 0; transform: translateY(40px);
@@ -273,7 +273,6 @@
             .hindi-sub-line2 { font-size: 0.95rem; }
             .soch-meaning { margin-top: 1.2rem; }
             .soch-meaning-item, .soch-meaning-sep { font-size: 0.85rem; }
-            .pg-grid { grid-template-columns: 1fr; gap: 1.5rem; }
             .pg-inner { padding: 0 1.5rem; }
             .phil-inner { padding: 0 1.5rem; }
             .spark-content { text-align: left; }
@@ -377,7 +376,7 @@
     <div class="pg-inner">
         <div class="pg-header">
             <div class="pg-title font-display" id="pgTitle">The Playground</div>
-            <div class="pg-sub font-body" id="pgSub">Things I'm learning. Things I'm building. All from curiosity.</div>
+            <div class="pg-sub font-body" id="pgSub">Learning. Building. All from curiosity.</div>
         </div>
         <div class="pg-grid">
             <div class="pg-card clickable" onclick="window.location.href='/gallery'">
@@ -390,16 +389,6 @@
                     <div class="pg-card-title font-display">Digital Art from Midjourney</div>
                     <div class="pg-card-desc">Exploring visual art through AI prompts. Every image is an experiment. Every prompt, a new world.</div>
                     <div class="pg-card-arrow">View Gallery <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-                </div>
-            </div>
-            <div class="pg-card coming-soon">
-                <div class="pg-card-body">
-                    <div class="pg-card-icon" style="background:rgba(139,139,158,0.1);">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b8b9e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                    </div>
-                    <div class="pg-card-title font-display">What's Next?</div>
-                    <div class="pg-card-desc">The next experiment starts with a single thought. Stay curious.</div>
-                    <span class="pg-card-tag">Coming Soon</span>
                 </div>
             </div>
         </div>

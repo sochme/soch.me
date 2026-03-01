@@ -261,6 +261,8 @@
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .scene-inner { padding: 4rem 1.5rem; }
+            .hindi-subtitle { margin-top: 1rem; }
+            .hindi-sub-line2 { font-size: 0.95rem; }
             .pg-grid { grid-template-columns: 1fr; gap: 1.5rem; }
             .pg-inner { padding: 0 1.5rem; }
             .phil-inner { padding: 0 1.5rem; }
@@ -415,11 +417,11 @@ window.addEventListener('load', () => {
       .fromTo('#hShape1', { opacity: 0, scale: 0.5 }, { opacity: 0.7, scale: 1, duration: 1.4, ease: 'power2.out' }, '-=0.9')
       .fromTo('#hShape2', { opacity: 0, y: 40 }, { opacity: 0.6, y: 0, duration: 1, ease: 'power2.out' }, '-=1')
       // Subtitle container fades in
-      .to('#hindiSubtitle', { opacity: 1, duration: 0.1 }, '+=0.3')
+      .to('#hindiSubtitle', { opacity: 1, duration: 0.1 }, '+=0.1')
       // "सोच." slides up
-      .fromTo('#hindiSubLine1', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.05')
+      .fromTo('#hindiSubLine1', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.05')
       // "बाकी सब कहानी है।" — word-by-word stagger
-      .from(splitLine2.words, { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out', stagger: 0.12 }, '-=0.3')
+      .from(splitLine2.words, { opacity: 0, y: 15, duration: 0.5, ease: 'power2.out', stagger: 0.08 }, '-=0.3')
       // Scroll hint
       .to('#scrollHint', { opacity: 1, duration: 1 }, '-=0.3');
 });

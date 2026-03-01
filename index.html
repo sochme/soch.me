@@ -292,19 +292,6 @@
             font-size: 0.85rem; color: #3d3658;
         }
 
-        /* ===== AUDIO TOGGLE ===== */
-        .audio-toggle {
-            position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
-            width: 44px; height: 44px; border-radius: 50%;
-            background: rgba(15,10,30,0.7); border: 1px solid rgba(245,240,232,0.15);
-            color: #f5f0e8; cursor: pointer; display: flex;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            transition: border-color 0.3s, background 0.3s;
-        }
-        .audio-toggle:hover { border-color: rgba(245,240,232,0.4); background: rgba(15,10,30,0.9); }
-        .audio-toggle.playing { border-color: #ff6b6b; }
-        .audio-toggle svg { width: 18px; height: 18px; }
         @media (max-width: 768px) {
             .scene-inner { padding: 4rem 1.5rem; }
             .hindi-subtitle { margin-top: 1rem; }
@@ -324,19 +311,6 @@
 <div class="grain"></div>
 <div id="loader"></div>
 
-<!-- Audio toggle -->
-<button class="audio-toggle" id="audioToggle" title="Toggle ambient sound" aria-label="Toggle ambient sound">
-    <svg id="audioOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-        <line x1="23" y1="9" x2="17" y2="15"></line>
-        <line x1="17" y1="9" x2="23" y2="15"></line>
-    </svg>
-    <svg id="audioOn" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-    </svg>
-</button>
 
 <div id="smooth-wrapper">
 <div id="smooth-content">
@@ -728,57 +702,6 @@ mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
     });
 });
 
-// ===== AUDIO LAYER =====
-(function() {
-    const btn = document.getElementById('audioToggle');
-    const iconOff = document.getElementById('audioOff');
-    const iconOn = document.getElementById('audioOn');
-    let audioCtx, gainNode, playing = false;
-
-    function createAmbient() {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0;
-        gainNode.connect(audioCtx.destination);
-
-        // Warm ambient pad — two detuned oscillators
-        const osc1 = audioCtx.createOscillator();
-        osc1.type = 'sine';
-        osc1.frequency.value = 120;
-        const osc2 = audioCtx.createOscillator();
-        osc2.type = 'sine';
-        osc2.frequency.value = 180;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 300;
-
-        osc1.connect(filter);
-        osc2.connect(filter);
-        filter.connect(gainNode);
-
-        osc1.start();
-        osc2.start();
-    }
-
-    btn.addEventListener('click', () => {
-        if (!audioCtx) createAmbient();
-
-        if (playing) {
-            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-            btn.classList.remove('playing');
-            iconOff.style.display = '';
-            iconOn.style.display = 'none';
-        } else {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            gainNode.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1);
-            btn.classList.add('playing');
-            iconOff.style.display = 'none';
-            iconOn.style.display = '';
-        }
-        playing = !playing;
-    });
-})();
 </script>
 </body>
 </html>

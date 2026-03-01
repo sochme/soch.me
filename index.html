@@ -92,10 +92,16 @@
             opacity: 0;
         }
         .soch-meaning {
+            position: relative;
+            height: clamp(2rem, 3.5vw, 2.8rem);
+            margin-top: 2rem; overflow: hidden;
+        }
+        .soch-meaning-item {
             font-size: clamp(1rem, 1.8vw, 1.3rem); font-weight: 300;
             letter-spacing: 0.15em; text-transform: uppercase; color: #8a8578;
-            margin-top: 2rem; opacity: 0;
+            position: absolute; left: 0; top: 0; opacity: 0;
         }
+        .soch-meaning-item .highlight { color: #059669; font-weight: 500; }
         .soch-shape-1 {
             width: clamp(200px, 35vw, 450px); height: clamp(120px, 18vw, 250px);
             background: #4361ee; top: 10%; right: -5%;
@@ -263,6 +269,8 @@
             .scene-inner { padding: 4rem 1.5rem; }
             .hindi-subtitle { margin-top: 1rem; }
             .hindi-sub-line2 { font-size: 0.95rem; }
+            .soch-meaning { height: 2rem; }
+            .soch-meaning-item { font-size: 0.85rem; }
             .pg-grid { grid-template-columns: 1fr; gap: 1.5rem; }
             .pg-inner { padding: 0 1.5rem; }
             .phil-inner { padding: 0 1.5rem; }
@@ -296,7 +304,11 @@
     <div class="shape soch-shape-2" id="sochShape2"></div>
     <div class="scene-inner">
         <div class="soch-hero font-display" id="sochHero">Soch</div>
-        <div class="soch-meaning font-body" id="sochMeaning">A thought · An idea · A spark of curiosity</div>
+        <div class="soch-meaning font-body" id="sochMeaning">
+            <div class="soch-meaning-item" id="sochM1">A thought</div>
+            <div class="soch-meaning-item" id="sochM2">An idea</div>
+            <div class="soch-meaning-item" id="sochM3">A spark of <span class="highlight">curiosity</span></div>
+        </div>
     </div>
 </section>
 
@@ -440,14 +452,21 @@ gsap.utils.toArray('.shape').forEach(shape => {
     });
 });
 
-// ===== SCENE 2: Soch reveal =====
+// ===== SCENE 2: Soch reveal with crossfade meaning =====
 const sochTL = gsap.timeline({
     scrollTrigger: { trigger: '#sceneSoch', start: 'top 70%', toggleActions: 'play none none reverse' }
 });
 sochTL.fromTo('#sochHero', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
-      .fromTo('#sochMeaning', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
       .fromTo('#sochShape1', { opacity: 0, x: 80 }, { opacity: 0.9, x: 0, duration: 1.2, ease: 'power2.out' }, '-=1')
-      .fromTo('#sochShape2', { opacity: 0, scale: 0.3 }, { opacity: 0.8, scale: 1, duration: 1, ease: 'back.out(1.7)' }, '-=0.8');
+      .fromTo('#sochShape2', { opacity: 0, scale: 0.3 }, { opacity: 0.8, scale: 1, duration: 1, ease: 'back.out(1.7)' }, '-=0.8')
+      // Meaning 1: "A thought"
+      .fromTo('#sochM1', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.3')
+      .to('#sochM1', { opacity: 0, y: -10, duration: 0.4, ease: 'power2.in' }, '+=0.7')
+      // Meaning 2: "An idea"
+      .fromTo('#sochM2', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.15')
+      .to('#sochM2', { opacity: 0, y: -10, duration: 0.4, ease: 'power2.in' }, '+=0.7')
+      // Meaning 3: "A spark of curiosity" — stays
+      .fromTo('#sochM3', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.15');
 
 // ===== SCENE 3: Soch? =====
 const qTL = gsap.timeline({

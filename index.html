@@ -116,23 +116,23 @@
         }
 
         /* ===== SCENE 3: Soch? — ELECTRIC VIOLET ===== */
-        .scene-question { background: #2d1b69; color: #ece7ff; }
+        .scene-question { background: #2d1b69; color: #f5f0e8; }
         .q-punct {
             font-size: clamp(10rem, 40vw, 38rem); font-weight: 700;
-            line-height: 0.75; color: rgba(255,255,255,0.08);
+            line-height: 0.75; color: rgba(251,191,36,0.1);
             position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
             opacity: 0; z-index: 1;
         }
         .q-word {
             font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700;
-            letter-spacing: -0.03em; color: #ece7ff; opacity: 0;
+            letter-spacing: -0.03em; color: #f5f0e8; opacity: 0;
         }
         .q-label {
-            font-size: clamp(1.1rem, 2vw, 1.6rem); font-style: italic;
-            color: #c4b5fd; margin-top: 1.5rem; opacity: 0;
+            font-size: clamp(1.1rem, 2vw, 1.6rem); font-weight: 300;
+            color: rgba(245,240,232,0.6); margin-top: 1.5rem; opacity: 0;
         }
         .q-line {
-            width: 80px; height: 2px; background: #7c3aed;
+            width: 80px; height: 2px; background: #fbbf24;
             margin-top: 2rem; transform: scaleX(0); transform-origin: left;
         }
         .q-shape-1 {
@@ -278,7 +278,8 @@
             .phil-inner { padding: 0 1.5rem; }
             .spark-content { text-align: left; }
             .spark-line { margin-left: 0; transform-origin: left; }
-            .q-punct, .spark-punct { display: none; }
+            .q-punct { font-size: clamp(8rem, 50vw, 14rem); right: 2%; }
+            .spark-punct { display: none; }
         }
     </style>
 </head>
@@ -321,8 +322,8 @@
     <div class="q-punct font-display" id="qPunct">?</div>
     <div class="shape q-shape-1" id="qShape1"></div>
     <div class="scene-inner">
-        <div class="q-word font-display" id="qWord">Soch<span style="color:#c4b5fd">?</span></div>
-        <div class="q-label font-serif" id="qLabel">the question</div>
+        <div class="q-word font-display" id="qWord">Soch<span style="color:#fbbf24">?</span></div>
+        <div class="q-label font-body" id="qLabel">That's where it starts.</div>
         <div class="q-line" id="qLine"></div>
     </div>
 </section>

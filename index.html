@@ -53,8 +53,21 @@
         }
         .hindi-hero {
             font-size: clamp(6rem, 20vw, 18rem); font-weight: 700;
-            line-height: 0.85; color: #ece7ff;
+            line-height: 0.85; color: #f5f0e8;
             opacity: 0;
+        }
+        .hindi-subtitle {
+            margin-top: clamp(1.5rem, 3vw, 2.5rem); opacity: 0;
+        }
+        .hindi-sub-line1 {
+            font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 700;
+            line-height: 1.1; color: #f5f0e8;
+        }
+        .hindi-sub-line1 .punct { color: #ff6b6b; }
+        .hindi-sub-line2 {
+            font-size: clamp(1rem, 2.5vw, 1.6rem); font-weight: 400;
+            line-height: 1.4; color: rgba(245,240,232,0.5);
+            margin-top: 0.5rem;
         }
         .hindi-shape-1 {
             width: clamp(120px, 25vw, 300px); height: clamp(120px, 25vw, 300px);
@@ -68,7 +81,7 @@
         .scroll-hint {
             position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
             font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.4em;
-            color: rgba(236,231,255,0.25); opacity: 0;
+            color: rgba(245,240,232,0.25); opacity: 0;
         }
 
         /* ===== SCENE 2: Soch — WARM CREAM ===== */
@@ -267,6 +280,10 @@
     <div class="shape hindi-shape-2" id="hShape2"></div>
     <div class="scene-inner">
         <div class="hindi-hero font-hindi" id="hindiHero">सोच</div>
+        <div class="hindi-subtitle" id="hindiSubtitle">
+            <div class="hindi-sub-line1 font-hindi" id="hindiSubLine1">सोच<span class="punct">.</span></div>
+            <div class="hindi-sub-line2 font-hindi" id="hindiSubLine2">बाकी सब कहानी है।</div>
+        </div>
     </div>
     <div class="scroll-hint" id="scrollHint">Scroll</div>
 </section>
@@ -375,23 +392,34 @@
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/SplitText.min.js"></script>
 <script>
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const IS_MOBILE = window.innerWidth < 768;
 
 // ===== ENTRANCE =====
 window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
+
+    // Split the second subtitle line into words for staggered reveal
+    const splitLine2 = SplitText.create('#hindiSubLine2', { type: 'words' });
+
     const tl = gsap.timeline({ delay: 0.2 });
 
     tl.to(loader, { opacity: 0, duration: 0.5, ease: 'power2.inOut', onComplete: () => loader.style.display = 'none' })
       .fromTo('.grain', { opacity: 0 }, { opacity: 0.03, duration: 0.6 }, '-=0.2')
-      // Hindi entrance
+      // Hindi hero entrance
       .fromTo('#hindiHero', { opacity: 0, y: 60, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power3.out' }, '-=0.3')
       // Shapes float in
       .fromTo('#hShape1', { opacity: 0, scale: 0.5 }, { opacity: 0.7, scale: 1, duration: 1.4, ease: 'power2.out' }, '-=0.9')
       .fromTo('#hShape2', { opacity: 0, y: 40 }, { opacity: 0.6, y: 0, duration: 1, ease: 'power2.out' }, '-=1')
+      // Subtitle container fades in
+      .to('#hindiSubtitle', { opacity: 1, duration: 0.1 }, '+=0.3')
+      // "सोच." slides up
+      .fromTo('#hindiSubLine1', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.05')
+      // "बाकी सब कहानी है।" — word-by-word stagger
+      .from(splitLine2.words, { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out', stagger: 0.12 }, '-=0.3')
       // Scroll hint
       .to('#scrollHint', { opacity: 1, duration: 1 }, '-=0.3');
 });

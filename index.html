@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>soch.me</title>
+    <meta name="description" content="सोच — A thought. An idea. A spark of curiosity. A space to experiment, learn, and create.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://soch.me/">
+    <meta property="og:title" content="soch.me — सोच">
+    <meta property="og:description" content="A thought. An idea. A spark of curiosity. Question bravely. Build boldly.">
+    <meta property="og:image" content="https://soch.me/img/og.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="soch.me — सोच">
+    <meta name="twitter:description" content="A thought. An idea. A spark of curiosity. Question bravely. Build boldly.">
+    <meta name="twitter:image" content="https://soch.me/img/og.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -264,9 +280,43 @@
         .pg-card-arrow svg { transition: transform 0.3s; }
         .pg-card.clickable:hover .pg-card-arrow svg { transform: translateX(4px); }
 
-        .footer { text-align: center; padding: 5rem 2rem; font-size: 0.85rem; color: #3d3658; background: #0f0a1e; }
+        .footer {
+            text-align: center; padding: 5rem 2rem 3rem;
+            background: #0f0a1e; position: relative;
+        }
+        .footer-soch {
+            font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+            color: rgba(245,240,232,0.08); margin-bottom: 1rem;
+        }
+        .footer-line {
+            font-size: 0.85rem; color: #3d3658;
+        }
 
-        /* ===== RESPONSIVE ===== */
+        /* ===== SCENE TRANSITIONS ===== */
+        .scene-transition {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 30vh;
+            pointer-events: none; z-index: 0;
+        }
+        .scene-hindi .scene-transition { background: linear-gradient(to bottom, transparent, #f5f0e8); }
+        .scene-soch .scene-transition { background: linear-gradient(to bottom, transparent, #2d1b69); }
+        .scene-question .scene-transition { background: linear-gradient(to bottom, transparent, #f59e0b); }
+        .scene-spark .scene-transition { background: linear-gradient(to bottom, transparent, #7f1d1d); }
+        .scene-conviction .scene-transition { background: linear-gradient(to bottom, transparent, #065f46); }
+        .scene-sirf .scene-transition { background: linear-gradient(to bottom, transparent, #faf7f2); }
+
+        /* ===== AUDIO TOGGLE ===== */
+        .audio-toggle {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(15,10,30,0.7); border: 1px solid rgba(245,240,232,0.15);
+            color: #f5f0e8; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .audio-toggle:hover { border-color: rgba(245,240,232,0.4); background: rgba(15,10,30,0.9); }
+        .audio-toggle.playing { border-color: #ff6b6b; }
+        .audio-toggle svg { width: 18px; height: 18px; }
         @media (max-width: 768px) {
             .scene-inner { padding: 4rem 1.5rem; }
             .hindi-subtitle { margin-top: 1rem; }
@@ -286,6 +336,20 @@
 <div class="grain"></div>
 <div id="loader"></div>
 
+<!-- Audio toggle -->
+<button class="audio-toggle" id="audioToggle" title="Toggle ambient sound" aria-label="Toggle ambient sound">
+    <svg id="audioOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+    </svg>
+    <svg id="audioOn" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+    </svg>
+</button>
+
 <div id="smooth-wrapper">
 <div id="smooth-content">
 
@@ -301,6 +365,7 @@
         </div>
     </div>
     <div class="scroll-hint" id="scrollHint">Scroll</div>
+    <div class="scene-transition"></div>
 </section>
 
 <!-- ===== SCENE 2: Soch ===== -->
@@ -317,6 +382,7 @@
             <div class="soch-meaning-item" id="sochM3">A spark of <span class="highlight">curiosity</span></div>
         </div>
     </div>
+    <div class="scene-transition"></div>
 </section>
 
 <!-- ===== SCENE 3: Soch? ===== -->
@@ -328,6 +394,7 @@
         <div class="q-label font-body" id="qLabel">That's where it starts.</div>
         <div class="q-line" id="qLine"></div>
     </div>
+    <div class="scene-transition"></div>
 </section>
 
 <!-- ===== SCENE 4: Soch! ===== -->
@@ -341,6 +408,7 @@
             <div class="spark-line" id="sparkLine"></div>
         </div>
     </div>
+    <div class="scene-transition"></div>
 </section>
 
 <!-- ===== SCENE 5: Soch. ===== -->
@@ -351,6 +419,7 @@
         <div class="conv-label font-body" id="convLabel">No turning back.</div>
         <div class="conv-line" id="convLine"></div>
     </div>
+    <div class="scene-transition"></div>
 </section>
 
 <!-- ===== SCENE 6: Sirf Ek Soch ===== -->
@@ -362,6 +431,7 @@
         <div class="sirf-sub-hindi font-hindi" id="sirfSubHindi">बस एक सोच काफ़ी है।</div>
         <div class="sirf-sub-english font-body" id="sirfSubEnglish">Just one thought is all it takes.</div>
     </div>
+    <div class="scene-transition"></div>
 </section>
 
 <!-- ===== SCENE 7: Philosophy ===== -->
@@ -397,7 +467,10 @@
         </div>
     </div>
 </section>
-<div class="footer font-body">soch.me · built with curiosity</div>
+<div class="footer">
+    <div class="footer-soch font-hindi">सोच</div>
+    <div class="footer-line font-body">soch.me · built with curiosity</div>
+</div>
 
 </div><!-- #smooth-content -->
 </div><!-- #smooth-wrapper -->
@@ -672,6 +745,58 @@ mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
             scrollTrigger: { trigger: c, start: 'top 85%', toggleActions: 'play none none reverse' } });
     });
 });
+
+// ===== AUDIO LAYER =====
+(function() {
+    const btn = document.getElementById('audioToggle');
+    const iconOff = document.getElementById('audioOff');
+    const iconOn = document.getElementById('audioOn');
+    let audioCtx, gainNode, playing = false;
+
+    function createAmbient() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0;
+        gainNode.connect(audioCtx.destination);
+
+        // Warm ambient pad — two detuned oscillators
+        const osc1 = audioCtx.createOscillator();
+        osc1.type = 'sine';
+        osc1.frequency.value = 120;
+        const osc2 = audioCtx.createOscillator();
+        osc2.type = 'sine';
+        osc2.frequency.value = 180;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 300;
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gainNode);
+
+        osc1.start();
+        osc2.start();
+    }
+
+    btn.addEventListener('click', () => {
+        if (!audioCtx) createAmbient();
+
+        if (playing) {
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+            btn.classList.remove('playing');
+            iconOff.style.display = '';
+            iconOn.style.display = 'none';
+        } else {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            gainNode.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1);
+            btn.classList.add('playing');
+            iconOff.style.display = 'none';
+            iconOn.style.display = '';
+        }
+        playing = !playing;
+    });
+})();
 </script>
 </body>
 </html>
